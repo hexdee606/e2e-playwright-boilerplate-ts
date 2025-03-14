@@ -1,0 +1,45 @@
+/*
+  ================================================================
+  TypeScript Configuration (`tsconfig.json`)
+  ================================================================
+
+  Author: Dipen Chavan (hexdee606)
+  Version: 0.0.1
+  Last Modified: 2025-03-14
+  Description: This configuration file sets up TypeScript compiler options,
+               module resolution, and alias paths for the project.
+
+  Notes:
+    - The 'target' is set to 'ESNext' to compile to the latest ECMAScript version.
+    - We use 'node' for module resolution, suitable for Node.js projects.
+    - The alias '@test' is mapped to 'utilities/test.ts'.
+    - Strict type checking is enabled to ensure better code quality.
+    - JavaScript files are allowed in the project for compatibility.
+
+  ================================================================
+*/
+
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "allowJs": true,
+    "paths": {
+      "@settings/ConfigSettings": [
+        "settings/ConfigSettings.ts"
+      ]
+    }
+  },
+  "include": [
+    "settings/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "typeAcquisition": {
+    "enable": false
+  }
+}

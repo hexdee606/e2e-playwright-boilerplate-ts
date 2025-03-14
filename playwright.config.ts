@@ -1,79 +1,158 @@
-import { defineConfig, devices } from '@playwright/test';
+/*
+  ================================================================
+  Playwright Configuration (`playwright.config.ts`)
+  ================================================================
+
+  Author: Dipen Chavan (hexdee606)
+  Version: 0.0.1
+  Last Modified: 2025-03-14
+  Description: This configuration file sets up Playwright for end-to-end
+               testing with behavior-driven development (BDD) integration.
+               It includes settings for test directories, timeouts, retries,
+               reporting, logging, and parallel test execution.
+
+  Notes:
+    - The 'timeout' is set globally for all tests.
+    - Retry count is set to 0 (no retries) for failed tests.
+    - Video and screenshot capture options are enabled for better debugging.
+    - Headless mode is configurable through the 'headless' setting.
+    - Custom configurations for BDD are also integrated.
+    - Parallel execution is enabled to speed up the tests.
+
+  ================================================================
+*/
+
+import {defineConfig} from "@playwright/test"; // Import Playwright test configuration function
+import {defineBddConfig} from "playwright-bdd"; // Import BDD configuration function for behavior-driven testing
+import config from "./settings/ConfigSettings"; // Import project-specific configuration settings
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
+ * BDD Configuration for Playwright-BDD Integration.
+ * This includes paths to feature files, step definitions, and other BDD settings.
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+defineBddConfig({
+    features: config.bddPaths.feature,       // Path to the BDD feature files
+    steps: config.bddPaths.steps,            // Path to the step definition files
+    statefulPoms: true,                      // Enables the use of stateful Page Object Models (POM)
+    outputDir: config.dirPaths.testDir,      // Directory where test results will be stored
+    verbose: config.verbose,                 // Enable verbose logging if set to true
+    aiFix: {
+        promptAttachment: config.verbose,    // Attach AI-driven fixes if verbose logging is enabled
+    },
+});
 
 /**
- * See https://playwright.dev/docs/test-configuration.
+ * Playwright Test Configuration.
+ * This includes general settings like timeout, retries, workers, and paths for tests and output.
  */
 export default defineConfig({
-  testDir: './src',
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://127.0.0.1:3000',
+    /**
+     * Directories for test files and output.
+     * Defines where Playwright will look for test files and where to store the results.
+     */
+    testDir: config.dirPaths.testDir,        // Directory path for test files
+    outputDir: config.dirPaths.outputDir,    // Directory path to store test artifacts (logs, screenshots, reports)
+    tsconfig: "tsconfig.json",               // Path to the TypeScript configuration file
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-  },
+    /**
+     * Timeout and retry settings for tests.
+     * Defines how long to wait before timing out a test and the retry behavior.
+     */
+    timeout: config.generalTimeout,          // Global test timeout (max test duration)
+    retries: 0,                              // Number of retries for failed tests (set to 0 for no retries)
+    workers: 4,                              // Number of parallel workers to run tests concurrently
+    fullyParallel: true,                     // Enable full parallel test execution
 
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+    /**
+     * Snapshot and reporting settings.
+     * Defines how snapshots and test reports are handled.
+     */
+    updateSnapshots: "missing",              // Only update snapshots if they're missing or outdated
+    reportSlowTests: null,                   // Set a threshold to report slow tests (can be a number of milliseconds)
+    reporter: [
+        ['dot'],                             // Simple dot-based reporter for minimal output in the terminal
+    ],
+
+    /**
+     * Expectation timeout settings.
+     * Defines the timeout for each assertion in tests.
+     */
+    expect: {
+        timeout: config.testTimeout,         // Timeout for each individual expectation
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+    /**
+     * Logging settings.
+     * Controls the verbosity of the output (e.g., quiet mode vs. detailed logging).
+     */
+    quiet: !config.verbose,                  // If 'true', suppress verbose logs; otherwise, show detailed logs
+
+    use: {
+        browserName: "chromium",              // The browser to use for the tests
+        defaultBrowserType: "chromium",       // The default browser type to use
+        headless: config.headless,            // Run tests in headless mode (true or false)
+        trace: "retain-on-first-failure",     // Keep trace on first failure for debugging
+        video: "retain-on-failure",           // Record video on failure
+        screenshot: "on-first-failure",       // Capture a screenshot on the first failure
+        baseURL: "https://www.google.com",    // Base URL for the tests
+        acceptDownloads: true,                // Allow file downloads during tests
+        navigationTimeout: config.navigationTimeout, // Timeout for navigation actions
+
+        // Configure viewport based on headless mode
+        viewport: config.headless ? {width: 1280, height: 720} : null,
+
+        // Configure context options such as HAR logging
+        contextOptions: {
+            recordHar: config.verbose ? {
+                path: config.generateHarLogFilePath('test'), // Path to store the HAR (HTTP Archive) logs
+                mode: 'minimal'            // Specifies the level of data to capture: 'minimal' or 'full'
+            } : undefined,
+            logger: {
+                isEnabled: (name: string, severity: string): boolean => ['verbose', 'info', 'warning', 'error'].includes(severity),
+                log: (name: string, severity: string, message: string, args: any[]): void => {
+                    config.consoleLogs(name, severity, message, args);
+                }
+            },  // Use centralized logger function
+        },
+
+        launchOptions: {
+            // Additional launch options
+            args: [
+                '--start-maximized',
+                '--disable-infobars',
+                '--disable-popup-blocking',
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-extensions',
+                '--incognito',
+                '--enable-automation',
+                '--disable-gpu',
+                '--allow-file-access-from-files',
+                '--enable-logging',
+                '--v=1'
+            ],                                 // Arguments to pass to the browser instance (currently empty)
+            chromiumSandbox: false,                   // Disable Chromium sandbox (for certain environments)
+            downloadsPath: config.downloadPath,      // Path to store downloaded files
+            slowMo: config.slowMo                    // Delay between actions for debugging
+        }
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://127.0.0.1:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+    /**
+     * Project configuration (used for running tests across different browsers or environments).
+     * This allows the configuration to be customized for different projects or setups.
+     */
+    projects: [
+        {
+            name: "suit1",                         // Name of the test suite
+            grep: /@suit1/,                        // Filter tests based on the @suit1 tag
+            outputDir: `${config.dirPaths.outputDir}/suit1/`, // Directory to store results for this suite
+            fullyParallel: false                   // Do not run tests in this suite fully in parallel
+        },
+        {
+            name: "suit2",                         // Name of the test suite
+            grep: /@suit2/,                        // Filter tests based on the @suit2 tag
+            outputDir: `${config.dirPaths.outputDir}/suit2/`, // Directory to store results for this suite
+            fullyParallel: false                   // Do not run tests in this suite fully in parallel
+        }
+    ]
 });

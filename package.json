@@ -1,15 +1,81 @@
 {
-  "name": "e2e-playwright-boilerplate-v2",
-  "version": "1.0.0",
-  "description": "",
+  "name": "end-to-end-playwright-boilerplate",
+  "version": "0.0.2",
+  "description": "A boilerplate project for end-to-end testing using Playwright, TypeScript, and other modern tools.",
   "main": "index.js",
   "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "Playwright",
+    "end-to-end",
+    "boilerplate",
+    "typescript",
+    "testing",
+    "automation"
+  ],
+  "author": "Dipen Chavan (hexdee606)",
+  "license": "Apache-2.0",
+  "type": "module",
   "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2",
+    "chalk": "^5.4.1"
+  },
+  "dependencies": {
     "@playwright/test": "^1.51.0",
-    "@types/node": "^22.13.10"
-  }
+    "allure-commandline": "^2.33.0",
+    "allure-playwright": "^3.2.0",
+    "playwright-bdd": "^8.2.1"
+  },
+  "peerDependencies": {
+    "node": "^20.11.1",
+    "npm": "^11.2.0"
+  },
+  "optionalDependencies": {
+    "node": "^20.11.1",
+    "npm": "^11.2.0"
+  },
+  "files": [
+    "./configs/**/*",
+    "./resources/**/*",
+    "./settings/**/*",
+    "./src/**/*",
+    "./utilities/**/*",
+    ".gitignore",
+    "CHANGELOG.md",
+    "package.json",
+    "playwright.config.ts",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "exports": {
+    "settings/ConfigSettings": {
+      "import": "./settings/ConfigSettings.ts"
+    }
+  },
+  "jest": {
+    "verbose": true,
+    "globals": {
+      "settings/ConfigSettings": "./settings/ConfigSettings"
+    }
+  },
+  "directories": {
+    "configs": "configs",
+    "resources": "resources",
+    "settings": "settings",
+    "src": "src",
+    "utilities": "utilities",
+    "out": "out"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=7.0.0"
+  },
+  "homepage": "https://example.com",
+  "readme": "README.md",
+  "maintainers": [
+    {
+      "name": "Dipen Chavan",
+      "email": "example@example.com"
+    }
+  ]
 }
