@@ -4,7 +4,7 @@
   ================================================================
 
   Author: Dipen Chavan (hexdee606)
-  Version: 0.0.1
+  Version: 0.0.2
   Last Modified: 2025-03-14
   Description: This configuration file sets up TypeScript compiler options,
                module resolution, and alias paths for the project.
@@ -27,14 +27,39 @@
     "esModuleInterop": true,
     "strict": true,
     "allowJs": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
     "paths": {
-      "@settings/ConfigSettings": [
+      "@ConfigSettings": [
         "settings/ConfigSettings.ts"
+      ],
+      "@envConf": [
+        "configs/envConf.ts"
+      ],
+      "@ApiHelper": [
+        "utilities/ApiHelper.ts"
+      ],
+      "@GraphQLHelper": [
+        "utilities/GraphQLHelper.ts"
+      ],
+      "@BrowserStorageManager": [
+        "utilities/BrowserStorageManager.ts"
+      ],
+      "@FileOperationsHelper": [
+        "utilities/FileOperationsHelper.ts"
+      ],
+      "@PlaywrightActions": [
+        "utilities/PlaywrightActions.ts"
       ]
     }
   },
   "include": [
-    "settings/**/*"
+    "settings/**/*",
+    "configs/**/*",
+    "src/**/*",
+    "utilities/**/*",
+    "node_modules/@types/node/globals.d.ts",
+    "node_modules/@types/node/globals.d.ts"
   ],
   "exclude": [
     "node_modules"

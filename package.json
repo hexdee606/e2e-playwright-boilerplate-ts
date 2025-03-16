@@ -47,17 +47,6 @@
     "README.md",
     "tsconfig.json"
   ],
-  "exports": {
-    "settings/ConfigSettings": {
-      "import": "./settings/ConfigSettings.ts"
-    }
-  },
-  "jest": {
-    "verbose": true,
-    "globals": {
-      "settings/ConfigSettings": "./settings/ConfigSettings"
-    }
-  },
   "directories": {
     "configs": "configs",
     "resources": "resources",

@@ -24,7 +24,8 @@
 
 import {defineConfig} from "@playwright/test"; // Import Playwright test configuration function
 import {defineBddConfig} from "playwright-bdd"; // Import BDD configuration function for behavior-driven testing
-import config from "./settings/ConfigSettings"; // Import project-specific configuration settings
+import config from "@ConfigSettings"; // Import project-specific configuration settings
+import envConf from "@envConf";
 
 /**
  * BDD Configuration for Playwright-BDD Integration.
@@ -94,7 +95,7 @@ export default defineConfig({
         trace: "retain-on-first-failure",     // Keep trace on first failure for debugging
         video: "retain-on-failure",           // Record video on failure
         screenshot: "on-first-failure",       // Capture a screenshot on the first failure
-        baseURL: "https://www.google.com",    // Base URL for the tests
+        baseURL: envConf.configs[envConf.env].frontend.url,    // Base URL for the tests
         acceptDownloads: true,                // Allow file downloads during tests
         navigationTimeout: config.navigationTimeout, // Timeout for navigation actions
 

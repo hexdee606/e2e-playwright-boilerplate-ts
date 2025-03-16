@@ -118,15 +118,15 @@ class ConfigSettings {
     consoleLogs(name: string, severity: string, message: string, args: any[]) {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');  // Format timestamp for the filename
 
-        let color = chalk.white;
+        let color;
 
-        if(severity === 'verbose'){
+        if (severity === 'verbose') {
             color = chalk.green;
-        } else if(severity === 'info'){
+        } else if (severity === 'info') {
             color = chalk.blue;
-        } else if(severity === 'warning'){
+        } else if (severity === 'warning') {
             color = chalk.yellow;
-        } else if(severity === 'error'){
+        } else if (severity === 'error') {
             color = chalk.red;
         } else {
             color = chalk.white;
