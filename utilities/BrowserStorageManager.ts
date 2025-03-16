@@ -1,21 +1,22 @@
-/**
- * @file BrowserStorageManager.ts
- * @description This file contains a utility class `BrowserStorageManager` that provides methods to interact with
- *              browser storage types (localStorage, sessionStorage, cookies) across Playwright browser pages and iframes.
- *              It supports setting, getting, removing, and clearing items from storage and cookies, and can handle
- *              frames by partial URL matching.
- *
- * @author Hexdee606
- * @date 2025-03-15
- * @version 1.0
- *
- * @dependencies Playwright
- *
- * Usage:
- * - Instantiate the `BrowserStorageManager` class and use its methods to interact with browser storage.
- * - This class supports handling of localStorage, sessionStorage, and cookies with full support for nested frames.
- */
+/*
+  ================================================================
+  Browser Storage Manager - Playwright Utility for Cookies, LocalStorage, and SessionStorage
+  ================================================================
 
+  Author: Dipen Chavan (hexdee606)
+  Version: 0.0.1
+  Last Modified: 2025-03-16
+  Description: This class provides utility methods to manage browser
+               storage (localStorage, sessionStorage, and cookies) in
+               Playwright. It includes functions for retrieving, setting,
+               removing, and clearing data across the page and its iframes.
+
+               The class supports multiple storage types and dynamically
+               handles storage interactions, ensuring compatibility with
+               different environments (e.g., in-page or iframe contexts).
+
+  ================================================================
+*/
 import {Page, Frame, BrowserContext} from '@playwright/test';
 
 // Define a Cookie interface to match the expected structure of cookies
@@ -232,11 +233,3 @@ class BrowserStorageManager {
 
 // Export the instance of BrowserStorageManager to be used elsewhere
 export default new BrowserStorageManager();
-
-/**
- * @footer
- *
- * Notes:
- * - This utility is designed to simplify interaction with various browser storage types during Playwright tests.
- * - Additional methods can be added to handle other storage-related operations as needed.
- */

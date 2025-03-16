@@ -1,3 +1,23 @@
+/*
+  ================================================================
+  File Operations Helper - Utility Functions for File and Data Operations
+  ================================================================
+
+  Author: Dipen Chavan (hexdee606)
+  Version: 0.0.1
+  Last Modified: 2025-03-16
+  Description: This class provides various utility methods for working with
+               files and data. It includes functions for file operations
+               such as deleting directories, formatting values, and handling
+               strings, numbers, and JSON data.
+
+               The class also provides methods for handling Gherkin tables,
+               formatting currency, and performing other utility operations
+               like rounding numbers, truncating strings, and parsing integers.
+
+  ================================================================
+*/
+
 import {existsSync, readdirSync, rmdirSync, statSync, unlinkSync} from 'fs';
 import * as path from 'path';
 

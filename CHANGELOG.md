@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2025-03-17
+
+| **Build**         | **Status** | **Date**               | **Commit**                                                         |
+|-------------------|------------|------------------------|--------------------------------------------------------------------|
+| P17032025A121000R | Alpha      | 17 March 2025 12:10 AM | Added utility functions for element interaction and error handling |
+
+### Added
+
+- **New Utility Functions** for enhanced element interaction:
+    - `waitAndGetInnerHTML(selector: string): Promise<string>`
+    - `waitAndGetInnerText(selector: string): Promise<string>`
+    - `waitAndGetInputValue(selector: string): Promise<string>`
+    - `waitAndGetAllInnerText(selector: string): Promise<string[]>`
+    - `isChecked(selector: string): Promise<boolean>`
+    - `isDisabled(selector: string): Promise<boolean>`
+    - `isEditable(selector: string): Promise<boolean>`
+    - `isEnabled(selector: string): Promise<boolean>`
+    - `isHidden(selector: string): Promise<boolean>`
+    - `isVisible(selector: string): Promise<boolean>`
+    - `waitAndKeyboardShortcuts(selector: string, shortcut: keyboardShortcuts): Promise<void>`
+    - `waitAndPressKey(selector: string, keys: string | string[]): Promise<void>`
+    - `waitAndSelectOption(selector: string, option: any): Promise<void>`
+    - `waitAndDownloadFile(selector: string, downloadPath: string): Promise<string>`
+    - `waitAndUploadFile(selector: string, filePath: string | string[]): Promise<void>`
+
+### Changed
+
+- **Error Handling**: Enhanced error messages for better debugging with specific context on what failed.
+
 ## [0.0.3] - 2025-03-16
 
 | **Build**         | **Status** | **Date**               | **Commit**                              |
