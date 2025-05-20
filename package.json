@@ -1,6 +1,6 @@
 {
   "name": "end-to-end-playwright-boilerplate",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A boilerplate project for end-to-end testing using Playwright, TypeScript, and other modern tools.",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,8 @@
     "allure-playwright": "^3.2.2",
     "monocart-reporter": "^2.9.19",
     "playwright-bdd": "^8.2.1",
-    "@hexdee606/playwright-logger":  "^0.0.4"
+    "zod": "^3.25.7",
+    "@hexdee606/playwright-logger": "^0.0.4"
   },
   "peerDependencies": {
     "node": "^20.19.2",

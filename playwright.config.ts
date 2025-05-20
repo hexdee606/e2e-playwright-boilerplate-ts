@@ -176,6 +176,12 @@ export default defineConfig({
             grep: /@suit2/,                        // Filter tests based on the @suit2 tag
             outputDir: `${config.dirPaths.outputDir}/suit2/`, // Directory to store results for this suite
             fullyParallel: false                   // Do not run tests in this suite fully in parallel
+        },
+        {
+            name: "suit3",                         // Name of the test suite
+            grep: /@suit3/,                        // Filter tests based on the @suit2 tag
+            outputDir: `${config.dirPaths.outputDir}/suit3/`, // Directory to store results for this suite
+            fullyParallel: false                   // Do not run tests in this suite fully in parallel
         }
     ]
 });

@@ -4,7 +4,7 @@
   ================================================================
 
   Author: Dipen Chavan (hexdee606)
-  Version: 0.0.2
+  Version: 0.0.3
   Last Modified: 2025-03-14
   Description: This configuration file sets up TypeScript compiler options,
                module resolution, and alias paths for the project.
@@ -58,7 +58,7 @@
     "configs/**/*",
     "src/**/*",
     "utilities/**/*",
-    "node_modules/@types/node/globals.d.ts",
+    "playwright.config.ts",
     "node_modules/@types/node/globals.d.ts"
   ],
   "exclude": [

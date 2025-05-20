@@ -32,7 +32,6 @@
 
 
 import {ElementHandle, expect, Frame, FrameLocator, Page} from "@playwright/test";
-import PlaywrightConfig from "../playwright.config";
 
 export enum keyboardShortcuts {
     selectAll = "Control+A",
