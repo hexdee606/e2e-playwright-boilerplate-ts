@@ -91,11 +91,11 @@ class ConfigSettings {
 
         this.testTimeout = 5000;                  // Default timeout for assertions (5 seconds)
         this.generalTimeout = 5 * 60 * 1000;      // Default general timeout (5 minutes)
-        this.headless = false;                    // Default headless setting (false)
+        this.headless = true;                     // Default headless setting (false)
         this.navigationTimeout = 10 * 1000;       // navigation timeout (Default 5 seconds)
         this.harLogs = "./out/logs/harLogs/";     // Static path where all HAR logs are saved
         this.downloadPath = "./out/downloads/";   // Path to store downloaded files
-        this.slowMo = 10;                       // Slow motion time between actions (0 for no delay)
+        this.slowMo = 10;                         // Slow motion time between actions (0 for no delay)
     }
 
     /**

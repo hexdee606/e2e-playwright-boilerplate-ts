@@ -1,11 +1,62 @@
-# Changelog - End-to-End Playwright Automation Testing Boilerplate
+# Changelog – End-to-End Playwright Automation Testing Boilerplate
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),  
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.5] - 2025-05-20
+---
+
+## [0.0.6] – 2025-05-20
+
+| **Build**         | **Status** | **Date**    | **Commit**                                    |
+|-------------------|------------|-------------|-----------------------------------------------|
+| P20052025P133000R | Alpha      | 20 May 2025 | UI POC refactor, extended config, and cleanup |
+
+### Added
+
+- **New Dependency**: Added `zod` package in `package.json`.
+- **New Test Suite**: `suit3` added in `playwright.config.ts` with `@suit3` tag and dedicated output directory.
+
+### Removed
+
+- Deleted placeholder `.gitkeep` files from:
+    - `src/backend/common/contracts/`
+    - `src/backend/services/features/`
+    - `src/backend/services/pages/`
+    - `src/backend/services/step_definitions/`
+
+### Changed
+
+- **package.json**:
+    - Version bump from `0.0.5` to `0.0.6`
+    - Added new dependency: `zod`
+
+- **playwright.config.ts**:
+    - Added new suite configuration: `suit3`
+
+- **ConfigSettings.ts**:
+    - Set `headless` mode to `true` (was previously `false`)
+
+- **poc_ui.feature**:
+    - Improved scenario documentation and formatting
+    - Added structured descriptions and tags
+
+- **poc_ui_page.ts**:
+    - Enhanced inline documentation for all major methods
+    - Cleaned up unnecessary comments and improved readability
+    - Updated heading check text to `"Getting Started"`
+
+- **poc_ui_steps.ts**:
+    - Added inline documentation to all BDD steps
+
+- **tsconfig.json**:
+    - Updated version to `0.0.3`
+    - Included `playwright.config.ts` in compilation scope
+
+---
+
+## [0.0.5] – 2025-05-20
 
 | **Build**         | **Status** | **Date**    | **Commit**                                  |
 |-------------------|------------|-------------|---------------------------------------------|
@@ -13,57 +64,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* **New Feature**: `poc_ui.feature` — handles advanced UI interactions like date picker and iframe navigation.
-* **New Step Definitions**: `poc_ui_steps.ts` mapped to the new feature for structured BDD support.
-* **Enhanced Reporters in `playwright.config.ts`**:
-
-    * `allure-playwright`: Added rich metadata (OS, architecture, Node version, etc.).
-    * `monocart-reporter`: Configured output and cleanup.
-    * `@hexdee606/playwright-logger`: Introduced structured logging with verbosity and timezone.
-* **New Paths in `ConfigSettings.ts`** for:
-
-    * `allureDir`
-    * `monocartDir`
-* Introduced helper methods in PlaywrightActions for better error handling and navigation control.
+- **Feature File**: `poc_ui.feature` – handles advanced UI interactions like date picker and iframe navigation
+- **Step Definitions**: `poc_ui_steps.ts` for mapped BDD execution
+- **Reporters in `playwright.config.ts`**:
+    - `allure-playwright`: rich metadata (OS, architecture, Node version)
+    - `monocart-reporter`: cleanup and output management
+    - `@hexdee606/playwright-logger`: structured logging with verbosity and timezone
+- **New Paths in `ConfigSettings.ts`**:
+    - `allureDir`
+    - `monocartDir`
+- **PlaywrightActions.ts**: added utility methods for error handling and navigation
 
 ### Removed
 
-* Obsolete POC assets:
-
-    * `01-test.feature`
-    * `01-test_steps.ts`
-* Placeholder `.gitkeep` files in:
-
-    * `pages/`
-    * `step_definitions/`
+- **Obsolete Assets**:
+    - `01-test.feature`
+    - `01-test_steps.ts`
+- **Deleted `.gitkeep`**:
+    - `pages/`
+    - `step_definitions/`
 
 ### Changed
 
-* **package.json**:
-    * Updated dependencies:
+- **package.json**: Updated dependencies:
+    - `@types/node` → `^22.15.19`
+    - `allure-commandline` → `^2.34.0`
+    - `allure-playwright` → `^3.2.2`
+    - `monocart-reporter` → `^2.9.19`
+    - `@hexdee606/playwright-logger` → `^0.0.4`
+- **envConf.ts**: Updated frontend URL for `int` environment
+- **ConfigSettings.ts**:
+    - `verbose` logging default set to `false`
+    - `navigationTimeout` increased from 5000 → 10000ms
+    - `slowMo` set to `10`ms
+- **PlaywrightActions.ts**: improved wait and navigation behavior
 
-        * `@types/node` to `^22.15.19`
-        * `allure-commandline` to `^2.34.0`
-        * `allure-playwright` to `^3.2.2`
-        * `monocart-reporter` to `^2.9.19`
-        * `@hexdee606/playwright-logger` to `^0.0.4`
-    * Updated `node` and `npm` versions in `peerDependencies` and `optionalDependencies`
-* **envConf.ts**: Updated `int` environment frontend URL to `https://www.lambdatest.com/selenium-playground`.
-* **ConfigSettings.ts**:
+---
 
-    * Disabled verbose logging by default (`true` → `false`)
-    * Increased `navigationTimeout` from `5000`ms → `10000`ms
-    * Set `slowMo` delay to `10`ms for better debugging
-* **playwright.config.ts**:
-
-    * Reporter stack overhauled with full multi-reporter setup.
-* **PlaywrightActions.ts**:
-
-    * Rewrote navigation logic with `waitUntil: "load"` and explicit timeout.
-    * Improved error messaging across utility functions.
-    * Removed unused `selector` param from `goto`.
-
-## [0.0.4] - 2025-03-17
+## [0.0.4] – 2025-03-17
 
 | **Build**         | **Status** | **Date**               | **Commit**                                                         |
 |-------------------|------------|------------------------|--------------------------------------------------------------------|
@@ -71,92 +109,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New Utility Functions** for enhanced element interaction:
-    - `waitAndGetInnerHTML(selector: string): Promise<string>`
-    - `waitAndGetInnerText(selector: string): Promise<string>`
-    - `waitAndGetInputValue(selector: string): Promise<string>`
-    - `waitAndGetAllInnerText(selector: string): Promise<string[]>`
-    - `isChecked(selector: string): Promise<boolean>`
-    - `isDisabled(selector: string): Promise<boolean>`
-    - `isEditable(selector: string): Promise<boolean>`
-    - `isEnabled(selector: string): Promise<boolean>`
-    - `isHidden(selector: string): Promise<boolean>`
-    - `isVisible(selector: string): Promise<boolean>`
-    - `waitAndKeyboardShortcuts(selector: string, shortcut: keyboardShortcuts): Promise<void>`
-    - `waitAndPressKey(selector: string, keys: string | string[]): Promise<void>`
-    - `waitAndSelectOption(selector: string, option: any): Promise<void>`
-    - `waitAndDownloadFile(selector: string, downloadPath: string): Promise<string>`
-    - `waitAndUploadFile(selector: string, filePath: string | string[]): Promise<void>`
+- Utility functions for DOM interactions like:
+    - `waitAndGetInnerHTML`, `isChecked`, `waitAndUploadFile`, and more
 
 ### Changed
 
-- **Error Handling**: Enhanced error messages for better debugging with specific context on what failed.
+- Enhanced error messages in utilities for clearer debugging
 
-## [0.0.3] - 2025-03-16
+---
+
+## [0.0.3] – 2025-03-16
 
 | **Build**         | **Status** | **Date**               | **Commit**                              |
 |-------------------|------------|------------------------|-----------------------------------------|
-| P16032025P035000R | Alpha      | 16 March 2025 01:00 PM | updated configuration files and imports |
+| P16032025P035000R | Alpha      | 16 March 2025 01:00 PM | Updated configuration files and imports |
 
 ### Changed
 
-- **package.json**: Removed deprecated `exports` and `jest` configuration for `ConfigSettings` and updated import to
-  `@ConfigSettings`.
-- **playwright.config.ts**: Updated the `baseURL` for tests to use `envConf.configs[envConf.env].frontend.url` instead
-  of hardcoding `https://www.google.com`.
-- **settings/ConfigSettings.ts**: Fixed color logic in `consoleLogs` method for severity levels to ensure proper color
-  coding for `verbose`, `info`, `warning`, and `error` logs.
+- **package.json**: Removed deprecated `exports` and `jest`
+- **playwright.config.ts**: Now uses dynamic frontend URL from config
+- **ConfigSettings.ts**: Fixed console log color logic
 - **tsconfig.json**:
-    - Updated TypeScript `Version` to `0.0.2`.
-    - Added new paths for environment configuration and utility functions (e.g., `@envConf`, `@ApiHelper`,
-      `@PlaywrightActions`).
-    - Updated `include` paths to include new directories (`configs`, `src`, `utilities`).
-    - Added `outDir` and `baseUrl` for better module resolution.
+    - Version `0.0.2`
+    - Added path aliases (`@envConf`, `@ApiHelper`, `@PlaywrightActions`)
+    - Updated `include` to add configs, src, and utilities
 
 ### Removed
 
-- **configs/.gitkeep**: Deleted unused file.
+- `.gitkeep` file from `configs/`
 
 ### Fixed
 
-- **01-test_steps.ts**: Fixed test step (removed the placeholder `await page.goto("https://www.google.com/");`).
+- `01-test_steps.ts`: Removed hardcoded Google URL
 
-## [0.0.2] - 2025-03-15
+---
+
+## [0.0.2] – 2025-03-15
 
 | **Build**         | **Status** | **Date**               | **Commit**                   |
 |-------------------|------------|------------------------|------------------------------|
-| P15032025A124000R | Alpha      | 15 March 2025 12:40 AM | customised playwright config |
+| P15032025A124000R | Alpha      | 15 March 2025 12:40 AM | Customized Playwright config |
 
 ### Renamed
 
-- `changelog.md` → `CHANGELOG.md`: Renamed to match proper case convention.
-- `readme.md` → `README.md`: Renamed to match proper case convention.
+- `changelog.md` → `CHANGELOG.md`
+- `readme.md` → `README.md`
 
 ### Deleted
 
-- `settings/.gitkeep`: Deleted `.gitkeep` file that was used to keep an empty directory.
-
-### Modified
-
-- **package.json**: Updated project dependencies or configurations.
-- **playwright.config.ts**: Adjusted Playwright configuration.
+- `.gitkeep` from `settings/`
 
 ### Added
 
-- `settings/`: Added a new directory for configuration or other settings.
-- `src/frontend/features/01-test.feature`: New feature file for Playwright/Cucumber tests.
-- `src/frontend/step_definitions/01-test_steps.ts`: New step definition file for Playwright/Cucumber tests.
-- **tsconfig.json**: Added a TypeScript configuration file.
+- New project structure:
+    - `settings/`
+    - `src/frontend/features/01-test.feature`
+    - `src/frontend/step_definitions/01-test_steps.ts`
+- `tsconfig.json` for TypeScript setup
 
-## [0.0.1] - 2025-03-14
+---
+
+## [0.0.1] – 2025-03-14
 
 | **Build**         | **Status** | **Date**               | **Commit**                                                |
 |-------------------|------------|------------------------|-----------------------------------------------------------|
-| P14032025P040000R | Alpha      | 14 March 2025 04:00 PM | initial commit with Playwright framework structure design |
+| P14032025P040000R | Alpha      | 14 March 2025 04:00 PM | Initial commit with Playwright framework structure design |
 
 ### Added
 
-- `README.md`: Project overview and setup instructions.
-- `playwright.config.ts`: Configuration for Playwright testing.
-- `package.json`: Dependencies and project metadata.
-- Designed the folder and file structure for the framework.
+- `README.md`: Setup instructions
+- `playwright.config.ts`: Base configuration
+- `package.json`: Project dependencies
+- Project folder and file structure
