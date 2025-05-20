@@ -26,7 +26,7 @@
 */
 
 import path from 'path';
-import chalk, {Chalk} from "chalk"
+import chalk from "chalk"
 
 /**
  * Interface to define BDD feature and step file paths.
@@ -40,8 +40,10 @@ interface BddPaths {
  * Interface to define the directory paths for test results and other related files.
  */
 interface DirPaths {
-    testDir: string;  // Path to the directory for test files
+    testDir: string;   // Path to the directory for test files
     outputDir: string; // Path to the directory for storing test results
+    allureDir: string; // Path to the directory for the storing allure test results
+    monocartDir: string;  // Path to the directory for the storing mono-cart test results
 }
 
 /**
@@ -65,7 +67,7 @@ class ConfigSettings {
      * The constructor sets default paths for feature and step files, as well as default directory paths.
      */
     constructor() {
-        this.verbose = true; // Enable verbose logging by default
+        this.verbose = false; // Enable verbose logging by default
 
         // Default paths for BDD feature and step definition files
         this.bddPaths = {
@@ -82,16 +84,18 @@ class ConfigSettings {
         // Default directory paths for test results
         this.dirPaths = {
             testDir: "./out/tests",                 // Directory for test files
-            outputDir: "./out/test-results"         // Directory for saving test results
+            outputDir: "./out/test-results",        // Directory for saving test results
+            allureDir: "./out/test-results/allure-results", // Directory for saving allure test results
+            monocartDir: "./out/test-results/monocart-results" // Directory for saving monocart test results
         };
 
         this.testTimeout = 5000;                  // Default timeout for assertions (5 seconds)
         this.generalTimeout = 5 * 60 * 1000;      // Default general timeout (5 minutes)
         this.headless = false;                    // Default headless setting (false)
-        this.navigationTimeout = 5 * 1000;        // Default navigation timeout (5 seconds)
+        this.navigationTimeout = 10 * 1000;       // navigation timeout (Default 5 seconds)
         this.harLogs = "./out/logs/harLogs/";     // Static path where all HAR logs are saved
         this.downloadPath = "./out/downloads/";   // Path to store downloaded files
-        this.slowMo = 0;                          // Slow motion time between actions (0 for no delay)
+        this.slowMo = 10;                       // Slow motion time between actions (0 for no delay)
     }
 
     /**

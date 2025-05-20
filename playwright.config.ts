@@ -24,6 +24,7 @@
 
 import {defineConfig} from "@playwright/test"; // Import Playwright test configuration function
 import {defineBddConfig} from "playwright-bdd"; // Import BDD configuration function for behavior-driven testing
+import {platform, arch} from "node:os"
 import config from "@ConfigSettings"; // Import project-specific configuration settings
 import envConf from "@envConf";
 
@@ -71,7 +72,28 @@ export default defineConfig({
     updateSnapshots: "missing",              // Only update snapshots if they're missing or outdated
     reportSlowTests: null,                   // Set a threshold to report slow tests (can be a number of milliseconds)
     reporter: [
-        ['dot'],                             // Simple dot-based reporter for minimal output in the terminal
+        ['allure-playwright', {              // Allure reporter settings
+            details: true,                   // Enable detailed logging
+            suiteTitle: true,                // Enable suite title in reports
+            resultsDir: config.dirPaths.allureDir,  // Directory for Allure results
+            outputFolder: config.dirPaths.allureDir,    // Output folder for Allure reports
+            environmentInfo: {
+                Framework: "Playwright",     // Framework used for testing
+                OS: platform(),              // Operating system of the test execution environment
+                Architecture: arch(),        // Architecture of the test execution environment
+                Node_Version: process.version, // Node.js version being used
+            },
+        }],
+        ['monocart-reporter', {
+            name: 'Playwright',
+            clean: true,
+            outputFile: config.dirPaths.monocartDir
+        }],
+        ['@hexdee606/playwright-logger', {
+            timezone: 'IST',         // Or 'Asia/Kolkata'
+            logLevel: 'verbose',      // Or 'standard'
+            verbosity: 10
+        }]
     ],
 
     /**

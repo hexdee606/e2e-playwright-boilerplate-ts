@@ -5,6 +5,64 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.5] - 2025-05-20
+
+| **Build**         | **Status** | **Date**    | **Commit**                                  |
+|-------------------|------------|-------------|---------------------------------------------|
+| P20052025P125500R | Alpha      | 20 May 2025 | Enhanced test framework, reporting, and POC |
+
+### Added
+
+* **New Feature**: `poc_ui.feature` — handles advanced UI interactions like date picker and iframe navigation.
+* **New Step Definitions**: `poc_ui_steps.ts` mapped to the new feature for structured BDD support.
+* **Enhanced Reporters in `playwright.config.ts`**:
+
+    * `allure-playwright`: Added rich metadata (OS, architecture, Node version, etc.).
+    * `monocart-reporter`: Configured output and cleanup.
+    * `@hexdee606/playwright-logger`: Introduced structured logging with verbosity and timezone.
+* **New Paths in `ConfigSettings.ts`** for:
+
+    * `allureDir`
+    * `monocartDir`
+* Introduced helper methods in PlaywrightActions for better error handling and navigation control.
+
+### Removed
+
+* Obsolete POC assets:
+
+    * `01-test.feature`
+    * `01-test_steps.ts`
+* Placeholder `.gitkeep` files in:
+
+    * `pages/`
+    * `step_definitions/`
+
+### Changed
+
+* **package.json**:
+    * Updated dependencies:
+
+        * `@types/node` to `^22.15.19`
+        * `allure-commandline` to `^2.34.0`
+        * `allure-playwright` to `^3.2.2`
+        * `monocart-reporter` to `^2.9.19`
+        * `@hexdee606/playwright-logger` to `^0.0.4`
+    * Updated `node` and `npm` versions in `peerDependencies` and `optionalDependencies`
+* **envConf.ts**: Updated `int` environment frontend URL to `https://www.lambdatest.com/selenium-playground`.
+* **ConfigSettings.ts**:
+
+    * Disabled verbose logging by default (`true` → `false`)
+    * Increased `navigationTimeout` from `5000`ms → `10000`ms
+    * Set `slowMo` delay to `10`ms for better debugging
+* **playwright.config.ts**:
+
+    * Reporter stack overhauled with full multi-reporter setup.
+* **PlaywrightActions.ts**:
+
+    * Rewrote navigation logic with `waitUntil: "load"` and explicit timeout.
+    * Improved error messaging across utility functions.
+    * Removed unused `selector` param from `goto`.
+
 ## [0.0.4] - 2025-03-17
 
 | **Build**         | **Status** | **Date**               | **Commit**                                                         |

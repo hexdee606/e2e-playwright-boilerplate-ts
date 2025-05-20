@@ -32,6 +32,7 @@
 
 
 import {ElementHandle, expect, Frame, FrameLocator, Page} from "@playwright/test";
+import PlaywrightConfig from "../playwright.config";
 
 export enum keyboardShortcuts {
     selectAll = "Control+A",
@@ -120,19 +121,17 @@ class PlaywrightActions {
     /**
      * Navigates to a specified URL.
      * @param url - The URL to navigate to.
-     * @param selector - Optional selector to wait for after navigation.
      * @throws Will throw an error if the navigation fails.
      */
-    async goto(url: string, selector: string | undefined = undefined): Promise<void> {
+    async goto(url: string): Promise<void> {
         try {
-            await this.page?.goto(url);
-
-            if (selector) {
-                await this.page?.waitForSelector(selector); // Wait for the selector to appear
-            }
+            await this.page?.goto(url, {
+                waitUntil: "load",
+                timeout: 1000
+            });
         } catch (error) {
             console.error("Error navigating to URL:", error);
-            throw new Error("Navigation failed to URL: " + url);  // Added specific context for the URL
+            throw new Error("Navigation failed to URL: " + url);
         }
     }
 
@@ -148,7 +147,7 @@ class PlaywrightActions {
             return await frame.locator(selector).count();
         } catch (error) {
             console.error(`Error getting element count for selector "${selector}":`, error);
-            throw new Error(`Failed to retrieve element count for selector: ${selector}`);  // Specific error message
+            throw new Error(`Failed to retrieve element count for selector: ${selector}`);
         }
     }
 
@@ -171,7 +170,7 @@ class PlaywrightActions {
             await expect(await element.isChecked()).toBeTruthy();
         } catch (error) {
             console.error(`Error interacting with checkbox for selector "${selector}":`, error);
-            throw new Error(`Failed to check the checkbox for selector: ${selector}`);  // Specific error message
+            throw new Error(`Failed to check the checkbox for selector: ${selector}`);
         }
     }
 
@@ -195,7 +194,7 @@ class PlaywrightActions {
             await expect(await element.isChecked()).toBeFalsy();
         } catch (error) {
             console.error(`Error interacting with checkbox for selector "${selector}":`, error);
-            throw new Error(`Failed to uncheck the checkbox for selector: ${selector}`);  // Specific error message
+            throw new Error(`Failed to uncheck the checkbox for selector: ${selector}`);
         }
     }
 
@@ -214,7 +213,7 @@ class PlaywrightActions {
             await element.click();
         } catch (error) {
             console.error(`Error interacting with button for selector "${selector}":`, error);
-            throw new Error(`Failed to click the element for selector: ${selector}`);  // Specific error message
+            throw new Error(`Failed to click the element for selector: ${selector}`);
         }
     }
 
@@ -233,7 +232,7 @@ class PlaywrightActions {
             await element.dblclick();
         } catch (error) {
             console.error(`Error interacting with element for selector "${selector}":`, error);
-            throw new Error(`Failed to double-click the element for selector: ${selector}`);  // Specific error message
+            throw new Error(`Failed to double-click the element for selector: ${selector}`);
         }
     }
 

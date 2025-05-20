@@ -59,7 +59,7 @@ const envConf: EnvConf = {
         'int': {
             frontend: {
                 // The URL for the frontend application in the 'int' environment
-                url: 'https://letcode.in'  // Frontend URL for 'int' environment
+                url: 'https://www.lambdatest.com/selenium-playground'  // Frontend URL for 'int' environment
             },
             backend: {
                 // Configuration for backend services (API and GraphQL) in the 'int' environment
