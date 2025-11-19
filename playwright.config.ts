@@ -24,7 +24,7 @@
 
 import {defineConfig} from "@playwright/test"; // Import Playwright test configuration function
 import {defineBddConfig} from "playwright-bdd"; // Import BDD configuration function for behavior-driven testing
-import {platform, arch} from "node:os"
+import {platform, arch} from "node:os";
 import config from "@ConfigSettings"; // Import project-specific configuration settings
 import envConf from "@envConf";
 
@@ -40,7 +40,7 @@ defineBddConfig({
     verbose: config.verbose,                 // Enable verbose logging if set to true
     aiFix: {
         promptAttachment: config.verbose,    // Attach AI-driven fixes if verbose logging is enabled
-    },
+    }
 });
 
 /**

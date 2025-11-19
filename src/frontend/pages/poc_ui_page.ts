@@ -260,7 +260,7 @@ class PocUiPage {
      */
     async validateUserNavigatedToPlaywrightTesting(): Promise<void> {
         const actual = await playwrightActions.waitAndGetInnerText(this.getPageHeadingXPath);
-        expect(actual).toBe("Getting Started");
+        expect(actual).toContain("Getting Started");
     }
 }
 

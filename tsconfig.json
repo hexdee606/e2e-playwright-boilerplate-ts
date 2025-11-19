@@ -23,33 +23,32 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "strict": true,
     "allowJs": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "paths": {
       "@ConfigSettings": [
-        "settings/ConfigSettings.ts"
+        "./settings/ConfigSettings.ts"
       ],
       "@envConf": [
-        "configs/envConf.ts"
+        "./configs/envConf.ts"
       ],
       "@ApiHelper": [
-        "utilities/ApiHelper.ts"
+        "./utilities/ApiHelper.ts"
       ],
       "@GraphQLHelper": [
-        "utilities/GraphQLHelper.ts"
+        "./utilities/GraphQLHelper.ts"
       ],
       "@BrowserStorageManager": [
-        "utilities/BrowserStorageManager.ts"
+        "./utilities/BrowserStorageManager.ts"
       ],
       "@FileOperationsHelper": [
-        "utilities/FileOperationsHelper.ts"
+        "./utilities/FileOperationsHelper.ts"
       ],
       "@PlaywrightActions": [
-        "utilities/PlaywrightActions.ts"
+        "./utilities/PlaywrightActions.ts"
       ]
     }
   },
