@@ -15,10 +15,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added deterministic DNA/RNA memory retrieval for AI agents through
   `utilities/MemoryKnowledgeBase.ts`.
 
+## [0.1.0] - 2026-09-04
+
+### Added
+
+- Deterministic mocked login scenarios for secure credential entry, server failures, and transient failure recovery.
+- Mocked UI component coverage for select, checkbox, dialog, and assertion handling.
+- REST Fake Store product coverage with a Zod response contract.
+- GraphQL post response contract coverage.
+- Typed Page-based UI, REST, and GraphQL route mocking with offline success and failure coverage.
+- Open-source release documentation, security guidance, and AI-readable `llms.txt` metadata.
+
+### Changed
+
+- Updated UI selectors and assertions for current Selenium Playground behavior.
+- Added secure sensitive-input APIs and kept secret values out of scenario data and failure messages.
+- Updated project version to `0.1.0` in `package.json` and `package-lock.json`.
+
 ## [0.0.6] – 2025-05-20
 
 | **Build**         | **Status** | **Date**    | **Commit**                                    |
-|-------------------|------------|-------------|-----------------------------------------------|
+| ----------------- | ---------- | ----------- | --------------------------------------------- |
 | P20052025P133000R | Alpha      | 20 May 2025 | UI POC refactor, extended config, and cleanup |
 
 ### Added
@@ -67,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.5] – 2025-05-20
 
 | **Build**         | **Status** | **Date**    | **Commit**                                  |
-|-------------------|------------|-------------|---------------------------------------------|
+| ----------------- | ---------- | ----------- | ------------------------------------------- |
 | P20052025P125500R | Alpha      | 20 May 2025 | Enhanced test framework, reporting, and POC |
 
 ### Added
@@ -112,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.4] – 2025-03-17
 
 | **Build**         | **Status** | **Date**               | **Commit**                                                         |
-|-------------------|------------|------------------------|--------------------------------------------------------------------|
+| ----------------- | ---------- | ---------------------- | ------------------------------------------------------------------ |
 | P17032025A121000R | Alpha      | 17 March 2025 12:10 AM | Added utility functions for element interaction and error handling |
 
 ### Added
@@ -129,7 +146,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.3] – 2025-03-16
 
 | **Build**         | **Status** | **Date**               | **Commit**                              |
-|-------------------|------------|------------------------|-----------------------------------------|
+| ----------------- | ---------- | ---------------------- | --------------------------------------- |
 | P16032025P035000R | Alpha      | 16 March 2025 01:00 PM | Updated configuration files and imports |
 
 ### Changed
@@ -155,7 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.2] – 2025-03-15
 
 | **Build**         | **Status** | **Date**               | **Commit**                   |
-|-------------------|------------|------------------------|------------------------------|
+| ----------------- | ---------- | ---------------------- | ---------------------------- |
 | P15032025A124000R | Alpha      | 15 March 2025 12:40 AM | Customized Playwright config |
 
 ### Renamed
@@ -180,7 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] – 2025-03-14
 
 | **Build**         | **Status** | **Date**               | **Commit**                                                |
-|-------------------|------------|------------------------|-----------------------------------------------------------|
+| ----------------- | ---------- | ---------------------- | --------------------------------------------------------- |
 | P14032025P040000R | Alpha      | 14 March 2025 04:00 PM | Initial commit with Playwright framework structure design |
 
 ### Added

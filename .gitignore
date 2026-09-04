@@ -79,7 +79,6 @@ fabric.properties
 
 # node
 node_modules/
-package-lock.json
 
 # NPM Log Files
 npm-debug.log

@@ -20,54 +20,41 @@
 */
 
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "allowJs": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "paths": {
-      "@ConfigSettings": [
-        "settings/ConfigSettings.ts"
-      ],
-      "@envConf": [
-        "configs/envConf.ts"
-      ],
-      "@ApiHelper": [
-        "utilities/ApiHelper.ts"
-      ],
-      "@GraphQLHelper": [
-        "utilities/GraphQLHelper.ts"
-      ],
-      "@BrowserStorageManager": [
-        "utilities/BrowserStorageManager.ts"
-      ],
-      "@FileOperationsHelper": [
-        "utilities/FileOperationsHelper.ts"
-      ],
-      "@PlaywrightActions": [
-        "utilities/PlaywrightActions.ts"
-      ],
-      "@MemoryKnowledgeBase": [
-        "utilities/MemoryKnowledgeBase.ts"
-      ]
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "strict": true,
+        "types": ["node"],
+        "allowJs": true,
+        "outDir": "./dist",
+        "paths": {
+            "@ConfigSettings": ["./settings/ConfigSettings.ts"],
+            "@envConf": ["./configs/envConf.ts"],
+            "@ApiHelper": ["./utilities/ApiHelper.ts"],
+            "@GraphQLHelper": ["./utilities/GraphQLHelper.ts"],
+            "@BrowserStorageManager": ["./utilities/BrowserStorageManager.ts"],
+            "@FileOperationsHelper": ["./utilities/FileOperationsHelper.ts"],
+            "@PlaywrightActions": ["./utilities/PlaywrightActions.ts"],
+            "@TestFixtures": ["./utilities/TestFixtures.ts"],
+            "@PlaywrightMockingAddon": [
+                "./utilities/PlaywrightMockingAddon.ts"
+            ],
+            "@SecureDiagnostics": ["./utilities/SecureDiagnostics.ts"],
+            "@MemoryKnowledgeBase": ["./utilities/MemoryKnowledgeBase.ts"]
+        }
+    },
+    "include": [
+        "settings/**/*",
+        "configs/**/*",
+        "src/**/*",
+        "utilities/**/*",
+        "playwright.config.ts",
+        "node_modules/@types/node/globals.d.ts"
+    ],
+    "exclude": ["node_modules"],
+    "typeAcquisition": {
+        "enable": false
     }
-  },
-  "include": [
-    "settings/**/*",
-    "configs/**/*",
-    "src/**/*",
-    "utilities/**/*",
-    "playwright.config.ts",
-    "node_modules/@types/node/globals.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "typeAcquisition": {
-    "enable": false
-  }
 }

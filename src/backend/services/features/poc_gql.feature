@@ -40,6 +40,12 @@ Feature: GraphQLZero API Proof of Concept
     And  the post title should not be empty
     And  the user of the post should have a valid ID
 
+  @suit3
+  Scenario: Validate the fetched post response contract
+    When I send a GraphQL query to get post contract data for ID "2"
+    Then the response status should be 200
+    And the post response should match the contract
+
   # =========================================================================
   # @suit3
   # Scenario: Successfully create a new post

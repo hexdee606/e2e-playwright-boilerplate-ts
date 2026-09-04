@@ -17,7 +17,14 @@
 
   ================================================================
 */
-import {Page, Frame, BrowserContext} from '@playwright/test';
+import { Page, Frame, BrowserContext } from "@playwright/test";
+import {
+    installConsoleRedaction,
+    redactSensitiveText,
+    secureError,
+} from "@SecureDiagnostics";
+
+installConsoleRedaction();
 
 // Define a Cookie interface to match the expected structure of cookies
 interface Cookie {
@@ -39,9 +46,12 @@ class BrowserStorageManager {
      * @param {string} [partialUrl=""] - A partial URL to identify the iframe.
      * @returns {Promise<Record<string, any>>} A promise that resolves to an object containing localStorage keys and values.
      */
-    async getLocalStorage(page: Page, partialUrl: string = ""): Promise<Record<string, any>> {
+    async getLocalStorage(
+        page: Page,
+        partialUrl: string = "",
+    ): Promise<Record<string, any>> {
         const frame = await this._getFrame(page, partialUrl);
-        return await this._getStorage(frame, 'localStorage');
+        return await this._getStorage(frame, "localStorage");
     }
 
     /**
@@ -50,9 +60,12 @@ class BrowserStorageManager {
      * @param {string} [partialUrl=""] - A partial URL to identify the iframe.
      * @returns {Promise<Record<string, any>>} A promise that resolves to an object containing sessionStorage keys and values.
      */
-    async getSessionStorage(page: Page, partialUrl: string = ""): Promise<Record<string, any>> {
+    async getSessionStorage(
+        page: Page,
+        partialUrl: string = "",
+    ): Promise<Record<string, any>> {
         const frame = await this._getFrame(page, partialUrl);
-        return await this._getStorage(frame, 'sessionStorage');
+        return await this._getStorage(frame, "sessionStorage");
     }
 
     /**
@@ -63,9 +76,9 @@ class BrowserStorageManager {
     async getCookies(context: BrowserContext): Promise<Cookie[]> {
         try {
             const cookies = await context.cookies();
-            return cookies as Cookie[];  // Ensure we return cookies in the correct type
+            return cookies as Cookie[]; // Ensure we return cookies in the correct type
         } catch (error) {
-            throw new Error(`Failed to retrieve cookies: ${error}`);
+            throw secureError("Failed to retrieve cookies", error);
         }
     }
 
@@ -79,7 +92,7 @@ class BrowserStorageManager {
         try {
             await context.addCookies([cookie]);
         } catch (error) {
-            throw new Error(`Failed to set cookie: ${error}`);
+            throw secureError("Failed to set cookie", error);
         }
     }
 
@@ -92,12 +105,15 @@ class BrowserStorageManager {
     async removeCookie(context: BrowserContext, name: string): Promise<void> {
         try {
             const cookies = await context.cookies();
-            const cookie = cookies.find(c => c.name === name);
+            const cookie = cookies.find((c) => c.name === name);
             if (cookie) {
                 await context.clearCookies();
             }
         } catch (error) {
-            throw new Error(`Failed to remove cookie: ${error}`);
+            throw secureError(
+                `Failed to remove cookie named ${redactSensitiveText(name)}`,
+                error,
+            );
         }
     }
 
@@ -110,7 +126,7 @@ class BrowserStorageManager {
         try {
             await context.clearCookies();
         } catch (error) {
-            throw new Error(`Failed to clear cookies: ${error}`);
+            throw secureError("Failed to clear cookies", error);
         }
     }
 
@@ -122,14 +138,25 @@ class BrowserStorageManager {
      * @param {any} value - The value to set.
      * @returns {Promise<void>} A promise that resolves once the value has been set.
      */
-    async setStorage(frame: Frame | Page, storageType: 'localStorage' | 'sessionStorage', key: string, value: any): Promise<void> {
+    async setStorage(
+        frame: Frame | Page,
+        storageType: "localStorage" | "sessionStorage",
+        key: string,
+        value: any,
+    ): Promise<void> {
         try {
-            await frame.evaluate(({storageType, key, value}) => {
-                const storage = window[storageType];
-                storage.setItem(key, JSON.stringify(value));
-            }, {storageType, key, value});
+            await frame.evaluate(
+                ({ storageType, key, value }) => {
+                    const storage = window[storageType];
+                    storage.setItem(key, JSON.stringify(value));
+                },
+                { storageType, key, value },
+            );
         } catch (error) {
-            throw new Error(`Failed to set ${storageType} item: ${error}`);
+            throw secureError(
+                `Failed to set ${storageType} item for key ${redactSensitiveText(key)}`,
+                error,
+            );
         }
     }
 
@@ -140,14 +167,24 @@ class BrowserStorageManager {
      * @param {string} key - The key to remove.
      * @returns {Promise<void>} A promise that resolves once the value has been removed.
      */
-    async removeStorage(frame: Frame | Page, storageType: 'localStorage' | 'sessionStorage', key: string): Promise<void> {
+    async removeStorage(
+        frame: Frame | Page,
+        storageType: "localStorage" | "sessionStorage",
+        key: string,
+    ): Promise<void> {
         try {
-            await frame.evaluate(({storageType, key}) => {
-                const storage = window[storageType];
-                storage.removeItem(key);
-            }, {storageType, key});
+            await frame.evaluate(
+                ({ storageType, key }) => {
+                    const storage = window[storageType];
+                    storage.removeItem(key);
+                },
+                { storageType, key },
+            );
         } catch (error) {
-            throw new Error(`Failed to remove ${storageType} item: ${error}`);
+            throw secureError(
+                `Failed to remove ${storageType} item for key ${redactSensitiveText(key)}`,
+                error,
+            );
         }
     }
 
@@ -157,14 +194,17 @@ class BrowserStorageManager {
      * @param {'localStorage' | 'sessionStorage'} storageType - The type of storage to clear ('localStorage' or 'sessionStorage').
      * @returns {Promise<void>} A promise that resolves once all items have been cleared.
      */
-    async clearStorage(frame: Frame | Page, storageType: 'localStorage' | 'sessionStorage'): Promise<void> {
+    async clearStorage(
+        frame: Frame | Page,
+        storageType: "localStorage" | "sessionStorage",
+    ): Promise<void> {
         try {
             await frame.evaluate((storageType) => {
                 const storage = window[storageType];
                 storage.clear();
             }, storageType);
         } catch (error) {
-            throw new Error(`Failed to clear ${storageType}: ${error}`);
+            throw secureError(`Failed to clear ${storageType}`, error);
         }
     }
 
@@ -175,21 +215,27 @@ class BrowserStorageManager {
      * @returns {Promise<Record<string, any>>} A promise that resolves to an object containing the storage keys and values.
      * @private
      */
-    private async _getStorage(frame: Frame | Page, storageType: 'localStorage' | 'sessionStorage'): Promise<Record<string, any>> {
+    private async _getStorage(
+        frame: Frame | Page,
+        storageType: "localStorage" | "sessionStorage",
+    ): Promise<Record<string, any>> {
         try {
             return await frame.evaluate((storageType) => {
                 const storage = window[storageType];
-                return Array.from({length: storage.length}, (_, i) => {
+                return Array.from({ length: storage.length }, (_, i) => {
                     const key = storage.key(i);
-                    if (key !== null) { // Ensure key is not null
+                    if (key !== null) {
+                        // Ensure key is not null
                         const value = storage.getItem(key);
-                        return {[key]: value !== null ? JSON.parse(value) : null}; // Handle null values
+                        return {
+                            [key]: value !== null ? JSON.parse(value) : null,
+                        }; // Handle null values
                     }
                     return {}; // Skip if key is null
                 }).reduce((acc, curr) => Object.assign(acc, curr), {});
             }, storageType);
         } catch (error) {
-            throw new Error(`Failed to retrieve ${storageType} data: ${error}`);
+            throw secureError(`Failed to retrieve ${storageType} data`, error);
         }
     }
 
@@ -200,14 +246,20 @@ class BrowserStorageManager {
      * @returns {Promise<Frame | Page>} A promise that resolves to the Playwright frame object or the main page.
      * @private
      */
-    private async _getFrame(page: Page, partialUrl: string): Promise<Frame | Page> {
+    private async _getFrame(
+        page: Page,
+        partialUrl: string,
+    ): Promise<Frame | Page> {
         try {
             if (partialUrl) {
                 return await this._switchFrameByPartialUrl(page, partialUrl);
             }
             return page;
         } catch (error) {
-            throw new Error(`Failed to switch to frame: ${error}`);
+            throw secureError(
+                `Failed to switch to frame using URL fragment ${redactSensitiveText(partialUrl)}`,
+                error,
+            );
         }
     }
 
@@ -218,14 +270,21 @@ class BrowserStorageManager {
      * @returns {Promise<Frame | Page>} A promise that resolves to the Playwright frame object if found, otherwise the main page.
      * @private
      */
-    private async _switchFrameByPartialUrl(page: Page, partialUrl: string): Promise<Frame | Page> {
+    private async _switchFrameByPartialUrl(
+        page: Page,
+        partialUrl: string,
+    ): Promise<Frame | Page> {
         const iframes = page.frames();
-        const matchingFrame = iframes.find(frame => frame.url().includes(partialUrl));
+        const matchingFrame = iframes.find((frame) =>
+            frame.url().includes(partialUrl),
+        );
 
         if (matchingFrame) {
             return matchingFrame;
         } else {
-            console.warn(`Iframe containing URL part "${partialUrl}" not found. Returning the main page.`);
+            console.warn(
+                `Iframe containing URL part "${redactSensitiveText(partialUrl)}" not found. Returning the main page.`,
+            );
             return page;
         }
     }

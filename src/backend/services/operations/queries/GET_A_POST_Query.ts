@@ -32,12 +32,11 @@
 /**
  * Reusable GraphQL query to fetch a post by its ID.
  *
- * @param postId - The ID of the post to fetch.
- * @returns The GraphQL query string with the provided postId.
+ * @returns A parameterized GraphQL query for fetching a post by ID.
  */
-export const GET_POST_BY_ID = (postId: string | number) => `
-  query {
-    post(id: ${postId}) {
+export const GET_POST_BY_ID = `
+  query GetPostById($postId: ID!) {
+    post(id: $postId) {
       id
       title
       body

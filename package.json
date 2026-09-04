@@ -1,85 +1,106 @@
 {
-  "name": "end-to-end-playwright-boilerplate",
-  "version": "0.0.6",
-  "description": "A boilerplate project for end-to-end testing using Playwright, TypeScript, and other modern tools.",
-  "main": "index.js",
-  "scripts": {
-    "setup": "npm install && playwright install --with-deps",
-    "test:generate-bdd": "bddgen",
-    "test:e2e": "bddgen && playwright test",
-    "test:debug": "bddgen && playwright test --grep @debug --debug",
-    "test:smoke": "bddgen && playwright test --grep @smoke",
-    "report:allure-serve": "allure serve ./out/test-results/allure-results",
-    "report:allure-generate": "allure generate ./out/test-results/allure-results/ --clean -o ./out/allure-results",
-    "report:allure-open": "allure open ./out/allure-results",
-    "report:monocart-serve": "monocart serve out/test-results/monocart-results/index.html",
-    "report:monocart-show": "monocart show out/test-results/monocart-results/index.html"
-  },
-  "keywords": [
-    "Playwright",
-    "end-to-end",
-    "boilerplate",
-    "typescript",
-    "testing",
-    "automation"
-  ],
-  "author": "Dipen Chavan (hexdee606)",
-  "license": "Apache-2.0",
-  "type": "module",
-  "devDependencies": {
-    "@types/node": "^22.15.19",
-    "chalk": "^5.4.1",
-    "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@playwright/test": "^1.52.0",
-    "allure-commandline": "^2.34.0",
-    "allure-playwright": "^3.2.2",
-    "monocart-reporter": "^2.9.19",
-    "playwright-bdd": "^8.2.1",
-    "zod": "^3.25.7",
-    "@hexdee606/playwright-logger": "^0.0.4"
-  },
-  "peerDependencies": {
-    "node": "^20.19.2",
-    "npm": "^11.4.0"
-  },
-  "optionalDependencies": {
-    "node": "^20.19.2",
-    "npm": "^11.4.0"
-  },
-  "files": [
-    "./configs/**/*",
-    "./docs/**/*",
-    "./resources/**/*",
-    "./settings/**/*",
-    "./src/**/*",
-    "./utilities/**/*",
-    ".gitignore",
-    "CHANGELOG.md",
-    "package.json",
-    "playwright.config.ts",
-    "README.md",
-    "tsconfig.json"
-  ],
-  "directories": {
-    "configs": "configs",
-    "resources": "resources",
-    "settings": "settings",
-    "src": "src",
-    "utilities": "utilities",
-    "out": "out"
-  },
-  "engines": {
-    "node": ">=20.19.0",
-    "npm": ">=11.2.0"
-  },
-  "homepage": "https://example.com",
-  "readme": "README.md",
-  "maintainers": [
-    {
-      "name": "Dipen Chavan",
-      "email": "example@example.com"
+    "name": "end-to-end-playwright-boilerplate",
+    "version": "0.1.0",
+    "description": "A boilerplate project for end-to-end testing using Playwright, TypeScript, and other modern tools.",
+    "main": "index.js",
+    "scripts": {
+        "setup": "npm ci && playwright install --with-deps",
+        "clean:reports": "node -e \"const fs=require('node:fs'); ['out/test-results','out/logs'].forEach(path=>fs.rmSync(path,{recursive:true,force:true}))\"",
+        "security:scan-reports": "node scripts/scan-report-secrets.mjs",
+        "typecheck": "tsc --noEmit",
+        "audit": "npm audit --audit-level=high",
+        "test:generate-bdd": "bddgen",
+        "test:e2e": "node scripts/run-e2e.mjs",
+        "test:debug": "npm run clean:reports && bddgen && playwright test --project=suit1 --debug",
+        "test:smoke": "npm run clean:reports && bddgen && playwright test --grep @suit1",
+        "report:allure-serve": "allure serve ./out/test-results/allure-results",
+        "report:allure-generate": "allure generate ./out/test-results/allure-results/ --clean -o ./out/allure-results",
+        "report:allure-open": "allure open ./out/allure-results",
+        "report:monocart-serve": "monocart serve out/test-results/monocart-results/index.html",
+        "report:monocart-show": "monocart show out/test-results/monocart-results/index.html"
+    },
+    "keywords": [
+        "playwright",
+        "playwright-bdd",
+        "bdd",
+        "cucumber",
+        "end-to-end",
+        "boilerplate",
+        "typescript",
+        "testing",
+        "automation",
+        "automation-framework",
+        "api-testing",
+        "graphql-testing",
+        "page-object-model",
+        "enterprise-testing"
+    ],
+    "author": "Dipen Chavan (hexdee606)",
+    "license": "Apache-2.0",
+    "type": "module",
+    "devDependencies": {
+        "@types/node": "^25.0.3",
+        "chalk": "^5.6.2",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "@hexdee606/playwright-logger": "^0.1.0",
+        "@playwright/mcp": "^0.0.80",
+        "@playwright/test": "^1.62.1",
+        "allure-commandline": "^2.43.0",
+        "allure-playwright": "^3.12.0",
+        "moment": "^2.30.1",
+        "monocart-reporter": "^2.12.6",
+        "playwright-bdd": "^9.2.0",
+        "zod": "^4.5.4"
+    },
+    "files": [
+        "./configs/**/*",
+        "./docs/**/*",
+        "./resources/**/*",
+        "./settings/**/*",
+        "./src/**/*",
+        "./utilities/**/*",
+        ".gitignore",
+        "CHANGELOG.md",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "NOTICE",
+        "package.json",
+        "playwright.config.ts",
+        "README.md",
+        "SECURITY.md",
+        "llms.txt",
+        "tsconfig.json"
+    ],
+    "directories": {
+        "configs": "configs",
+        "resources": "resources",
+        "settings": "settings",
+        "src": "src",
+        "utilities": "utilities",
+        "out": "out"
+    },
+    "engines": {
+        "node": ">=20.19.0",
+        "npm": ">=11.2.0"
+    },
+    "homepage": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2.git"
+    },
+    "bugs": {
+        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2/issues"
+    },
+    "readme": "README.md",
+    "maintainers": [
+        {
+            "name": "Dipen Chavan",
+            "email": ""
+        }
+    ],
+    "allowScripts": {
+        "node": true
     }
-  ]
 }

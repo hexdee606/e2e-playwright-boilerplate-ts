@@ -46,3 +46,4 @@ or model-specific API is required.
 - `framework-architecture`: BDD layout, configuration, and execution flow.
 - `api-contracts`: REST/GraphQL helpers and Zod response contracts.
 - `reliable-ui-actions`: page objects, shared actions, frames, and waits.
+- `bdd-generation-and-agents`: source-of-truth files, generated output, agent roles, and validation commands.

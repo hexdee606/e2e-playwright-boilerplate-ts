@@ -1,0 +1,82 @@
+name: "POC Regression Suite"
+
+on:
+    workflow_dispatch:
+        inputs:
+            suite:
+                description: "Select regression suite"
+                required: true
+                default: "all"
+                type: choice
+                options:
+                    - all
+                    - suit1
+                    - suit2
+                    - suit3
+
+permissions:
+    contents: read
+
+concurrency:
+    group: poc-regression-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    regression:
+        name: "POC Regression - ${{ inputs.suite }}"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Playwright Chromium
+              run: npx playwright install --with-deps chromium
+
+            - name: Generate BDD tests
+              run: npm run test:generate-bdd
+
+            - name: Run selected regression suite
+              env:
+                  CI: "true"
+                  E2E_ALLOW_UNSAFE_CHROMIUM: "true"
+              run: |
+                  if [ "${{ inputs.suite }}" = "all" ]; then
+                    npx playwright test \
+                      --project=suit1 \
+                      --project=suit2 \
+                      --project=suit3 \
+                      --reporter=line,html
+                  else
+                    npx playwright test \
+                      --project="${{ inputs.suite }}" \
+                      --reporter=line,html
+                  fi
+
+            - name: Upload Playwright report
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: poc-regression-${{ inputs.suite }}
+                  path: |
+                      playwright-report/
+                      out/test-results/
+                  if-no-files-found: ignore
+                  retention-days: 14
+
+            - name: Publish regression summary
+              if: always()
+              run: |
+                  echo "## POC Regression Suite" >> "$GITHUB_STEP_SUMMARY"
+                  echo "" >> "$GITHUB_STEP_SUMMARY"
+                  echo "**Suite:** ${{ inputs.suite }}" >> "$GITHUB_STEP_SUMMARY"
+                  echo "**Status:** ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"

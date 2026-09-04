@@ -16,20 +16,23 @@
   ================================================================
 */
 
-import {request} from "@playwright/test";
+import { request } from "@playwright/test";
 import envConf from "@envConf";
+import { installConsoleRedaction } from "@SecureDiagnostics";
+
+installConsoleRedaction();
 
 // Enum for HTTP methods (GET, POST, PUT, PATCH, DELETE)
 enum Methods {
-    GET = "GET",    // HTTP GET method
-    POST = "POST",  // HTTP POST method
-    PUT = "PUT",    // HTTP PUT method
-    PATCH = "PATCH",// HTTP PATCH method
-    DELETE = "DELETE" // HTTP DELETE method
+    GET = "GET", // HTTP GET method
+    POST = "POST", // HTTP POST method
+    PUT = "PUT", // HTTP PUT method
+    PATCH = "PATCH", // HTTP PATCH method
+    DELETE = "DELETE", // HTTP DELETE method
 }
 
 // Extracting backend configuration from environment configuration
-const {url: baseUrl, headers} = envConf.configs[envConf.env].backend.api;
+const { url: baseUrl, headers } = envConf.configs[envConf.env].backend.api;
 
 // Configuration interface to define timeout and ignoreHTTPS errors
 interface Config {
@@ -45,7 +48,7 @@ interface Config {
 class ApiHelper {
     private baseUrl = baseUrl; // Base URL for API requests
     private headers = headers; // Default headers for API requests
-    private config: Config = {timeout: 5000, ignoreHTTPSErrors: false}; // Default configuration for requests
+    private config: Config = { timeout: 5000, ignoreHTTPSErrors: false }; // Default configuration for requests
 
     /**
      * Update the configuration for the API helper.
@@ -55,7 +58,7 @@ class ApiHelper {
      */
     setConfig(options: Partial<Config>): void {
         // Merging the new configuration options with the existing ones
-        this.config = {...this.config, ...options};
+        this.config = { ...this.config, ...options };
     }
 
     /**
@@ -104,7 +107,11 @@ class ApiHelper {
      * @throws {Error} Throws an error if the request fails or if parsing fails.
      */
     private async sendRequest(
-        endpoint: string, method: Methods, body: object = {}, params: any = null, headers: object = {}
+        endpoint: string,
+        method: Methods,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
     ): Promise<object> {
         const context = await request.newContext({}); // Create a new context for the request
         const url = this.normalizeUrl(endpoint); // Normalize the URL (base URL + endpoint)
@@ -113,10 +120,13 @@ class ApiHelper {
         const options = {
             timeout: this.config.timeout, // Set timeout based on the configuration
             method, // Set the HTTP method (GET, POST, PUT, etc.)
-            headers: {...this.headers, ...headers}, // Merge default and custom headers
-            data: body && Object.keys(body).length ? JSON.stringify(body) : undefined, // Add body if provided
+            headers: { ...this.headers, ...headers }, // Merge default and custom headers
+            data:
+                body && Object.keys(body).length
+                    ? JSON.stringify(body)
+                    : undefined, // Add body if provided
             params: params && Object.keys(params).length ? params : undefined, // Add query parameters if provided
-            ignoreHTTPSErrors: this.config.ignoreHTTPSErrors // Configure HTTPS error handling
+            ignoreHTTPSErrors: this.config.ignoreHTTPSErrors, // Configure HTTPS error handling
         };
 
         try {
@@ -124,12 +134,19 @@ class ApiHelper {
             const response = await context.fetch(url, options);
 
             // Attempt to parse the response body as JSON
-            const responseBody = await response.json().catch(() => response.text());
-            return {status: response.status(), data: responseBody}; // Return status and parsed response data
+            const responseBody = await response
+                .json()
+                .catch(() => response.text());
+            return { status: response.status(), data: responseBody }; // Return status and parsed response data
         } catch (error) {
-            // Catch any errors and log them
-            console.error(`API request failed: ${error}`);
-            throw new Error(`API request failed: ${error}`); // Rethrow the error
+            console.error(
+                "API request failed. Detailed transport data is intentionally suppressed.",
+            );
+            throw new Error(
+                "API request failed. See secured diagnostics for authorized investigation.",
+            );
+        } finally {
+            await context.dispose();
         }
     }
 
@@ -142,7 +159,12 @@ class ApiHelper {
      * @param {object} [headers={}] - Optional custom headers for the request.
      * @returns {Promise<object>} A promise that resolves to the response status and data.
      */
-    sendGetRequest(endpoint: string, body: object = {}, params: any = null, headers: object = {}): Promise<object> {
+    sendGetRequest(
+        endpoint: string,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
+    ): Promise<object> {
         return this.sendRequest(endpoint, Methods.GET, body, params, headers); // Call the generic sendRequest method with GET method
     }
 
@@ -155,7 +177,12 @@ class ApiHelper {
      * @param {object} [headers={}] - Optional custom headers for the request.
      * @returns {Promise<object>} A promise that resolves to the response status and data.
      */
-    sendPostRequest(endpoint: string, body: object = {}, params: any = null, headers: object = {}): Promise<object> {
+    sendPostRequest(
+        endpoint: string,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
+    ): Promise<object> {
         return this.sendRequest(endpoint, Methods.POST, body, params, headers); // Call the generic sendRequest method with POST method
     }
 
@@ -168,7 +195,12 @@ class ApiHelper {
      * @param {object} [headers={}] - Optional custom headers for the request.
      * @returns {Promise<object>} A promise that resolves to the response status and data.
      */
-    sendPutRequest(endpoint: string, body: object = {}, params: any = null, headers: object = {}): Promise<object> {
+    sendPutRequest(
+        endpoint: string,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
+    ): Promise<object> {
         return this.sendRequest(endpoint, Methods.PUT, body, params, headers); // Call the generic sendRequest method with PUT method
     }
 
@@ -181,7 +213,12 @@ class ApiHelper {
      * @param {object} [headers={}] - Optional custom headers for the request.
      * @returns {Promise<object>} A promise that resolves to the response status and data.
      */
-    sendPatchRequest(endpoint: string, body: object = {}, params: any = null, headers: object = {}): Promise<object> {
+    sendPatchRequest(
+        endpoint: string,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
+    ): Promise<object> {
         return this.sendRequest(endpoint, Methods.PATCH, body, params, headers); // Call the generic sendRequest method with PATCH method
     }
 
@@ -194,8 +231,19 @@ class ApiHelper {
      * @param {object} [headers={}] - Optional custom headers for the request.
      * @returns {Promise<object>} A promise that resolves to the response status and data.
      */
-    sendDeleteRequest(endpoint: string, body: object = {}, params: any = null, headers: object = {}): Promise<object> {
-        return this.sendRequest(endpoint, Methods.DELETE, body, params, headers); // Call the generic sendRequest method with DELETE method
+    sendDeleteRequest(
+        endpoint: string,
+        body: object = {},
+        params: any = null,
+        headers: object = {},
+    ): Promise<object> {
+        return this.sendRequest(
+            endpoint,
+            Methods.DELETE,
+            body,
+            params,
+            headers,
+        ); // Call the generic sendRequest method with DELETE method
     }
 }
 
