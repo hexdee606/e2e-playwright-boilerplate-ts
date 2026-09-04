@@ -1,0 +1,115 @@
+name: "Pull Request Validation"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  code-quality:
+    name: "Code Quality & BDD"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Check formatting
+        run: npx prettier --check .
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Generate BDD tests
+        run: npm run test:generate-bdd
+
+      - name: Validate generated tests
+        run: |
+          if [ ! -d "out/tests" ]; then
+            echo "❌ BDD test generation failed: out/tests directory not found."
+            exit 1
+          fi
+
+          if [ -z "$(find out/tests -type f -print -quit)" ]; then
+            echo "❌ BDD test generation failed: no tests generated."
+            exit 1
+          fi
+
+      - name: Validate Playwright configuration
+        run: npx playwright test --list
+
+  dependency-security:
+    name: "Dependency & Security"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Validate package lock
+        run: npm ci --ignore-scripts
+
+      - name: NPM security audit
+        run: npm audit --audit-level=high
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+
+      - name: Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  validation-summary:
+    name: "PR Validation Summary"
+    needs:
+      - code-quality
+      - dependency-security
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate all checks
+        run: |
+          echo "Code Quality & BDD: ${{ needs.code-quality.result }}"
+          echo "Dependency & Security: ${{ needs.dependency-security.result }}"
+
+          if [[ "${{ needs.code-quality.result }}" != "success" ||
+                "${{ needs.dependency-security.result }}" != "success" ]]; then
+            echo "❌ Pull Request validation failed."
+            exit 1
+          fi
+
+          echo "✅ All Pull Request validation checks passed."
