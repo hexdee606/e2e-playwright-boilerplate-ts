@@ -50,6 +50,9 @@
       ],
       "@PlaywrightActions": [
         "utilities/PlaywrightActions.ts"
+      ],
+      "@MemoryKnowledgeBase": [
+        "utilities/MemoryKnowledgeBase.ts"
       ]
     }
   },
