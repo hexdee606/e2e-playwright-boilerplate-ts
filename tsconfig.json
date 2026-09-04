@@ -48,7 +48,10 @@
         "./utilities/FileOperationsHelper.ts"
       ],
       "@PlaywrightActions": [
-        "./utilities/PlaywrightActions.ts"
+        "utilities/PlaywrightActions.ts"
+      ],
+      "@MemoryKnowledgeBase": [
+        "utilities/MemoryKnowledgeBase.ts"
       ]
     }
   },

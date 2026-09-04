@@ -51,6 +51,7 @@
   },
   "files": [
     "./configs/**/*",
+    "./docs/**/*",
     "./resources/**/*",
     "./settings/**/*",
     "./src/**/*",
