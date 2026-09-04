@@ -20,11 +20,11 @@
 
 interface Backend {
     api: {
-        url: string;  // The base URL for REST API requests
+        url: string; // The base URL for REST API requests
         headers: any; // Default headers for API requests (e.g., Content-Type, Accept)
     };
     gql: {
-        url: string;  // The base URL for GraphQL API requests
+        url: string; // The base URL for GraphQL API requests
         headers: any; // Default headers for GraphQL requests (e.g., Content-Type, Accept)
     };
 }
@@ -52,38 +52,38 @@ interface EnvConf {
  */
 const envConf: EnvConf = {
     // Current environment: The environment is set to 'int' if E2E is not provided
-    env: process.env.E2E || 'int',  // Default to 'int' if process.env.E2E is undefined or falsy
+    env: process.env.E2E || "int", // Default to 'int' if process.env.E2E is undefined or falsy
 
     configs: {
         // Configuration for 'int' (integration/testing) environment
-        'int': {
+        int: {
             frontend: {
                 // The URL for the frontend application in the 'int' environment
-                url: 'https://www.lambdatest.com/selenium-playground'  // Frontend URL for 'int' environment
+                url: "https://www.lambdatest.com/selenium-playground", // Frontend URL for 'int' environment
             },
             backend: {
                 // Configuration for backend services (API and GraphQL) in the 'int' environment
                 api: {
                     // The base URL for REST API in the 'int' environment
-                    url: 'https://fakestoreapi.com/', // URL for the REST API in 'int' environment
+                    url: "https://fakestoreapi.com/", // URL for the REST API in 'int' environment
 
                     // Headers to be used with REST API requests
                     headers: {
-                        'Content-Type': 'application/json', // Ensures the request body is in JSON format
-                        'Accept': 'application/json', // Ensures the server responds with JSON format
-                    }
+                        "Content-Type": "application/json", // Ensures the request body is in JSON format
+                        Accept: "application/json", // Ensures the server responds with JSON format
+                    },
                 },
                 gql: {
                     // The base URL for GraphQL API in the 'int' environment
-                    url: 'https://graphqlzero.almansi.me/api', // URL for the GraphQL API in 'int' environment
+                    url: "https://graphqlzero.almansi.me/api", // URL for the GraphQL API in 'int' environment
 
                     // Headers to be used with GraphQL API requests
                     headers: {
-                        'Content-Type': 'application/json', // Ensures the request body is in JSON format
-                        'Accept': 'application/json', // Ensures the server responds with JSON format
-                    }
-                }
-            }
+                        "Content-Type": "application/json", // Ensures the request body is in JSON format
+                        Accept: "application/json", // Ensures the server responds with JSON format
+                    },
+                },
+            },
         },
 
         // You can add more environments here (e.g., 'prod', 'dev')
@@ -111,18 +111,23 @@ const envConf: EnvConf = {
             }
         }
         */
-    }
+    },
 };
 
-const selectedEnv = process.env.E2E || 'int';
+const selectedEnv = process.env.E2E || "int";
 
 if (!envConf.configs[selectedEnv]) {
-    throw new Error(`Unknown E2E environment "${selectedEnv}". Available environments: ${Object.keys(envConf.configs).join(', ')}`);
+    throw new Error(
+        `Unknown E2E environment "${selectedEnv}". Available environments: ${Object.keys(envConf.configs).join(", ")}`,
+    );
 }
 
 envConf.env = selectedEnv;
-envConf.configs[selectedEnv].frontend.url = process.env.E2E_FRONTEND_URL || envConf.configs[selectedEnv].frontend.url;
-envConf.configs[selectedEnv].backend.api.url = process.env.E2E_API_URL || envConf.configs[selectedEnv].backend.api.url;
-envConf.configs[selectedEnv].backend.gql.url = process.env.E2E_GQL_URL || envConf.configs[selectedEnv].backend.gql.url;
+envConf.configs[selectedEnv].frontend.url =
+    process.env.E2E_FRONTEND_URL || envConf.configs[selectedEnv].frontend.url;
+envConf.configs[selectedEnv].backend.api.url =
+    process.env.E2E_API_URL || envConf.configs[selectedEnv].backend.api.url;
+envConf.configs[selectedEnv].backend.gql.url =
+    process.env.E2E_GQL_URL || envConf.configs[selectedEnv].backend.gql.url;
 
 export default envConf;

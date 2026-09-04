@@ -29,14 +29,13 @@
 
 import playwrightActions from "@PlaywrightActions";
 import moment from "moment";
-import {expect} from "@playwright/test";
+import { expect } from "@playwright/test";
 
 /**
  * Represents a UI page with utility methods for interacting with web elements.
  * This class encapsulates common actions like selecting UI options, working with date pickers, and parsing date strings.
  */
 class PocUiPage {
-
     /**
      * Generates an XPath selector for a given UI option text (e.g., a button or a link).
      *
@@ -100,11 +99,14 @@ class PocUiPage {
     private readonly getPageHeadingXPath: string;
 
     constructor() {
-        this.getUiOptionXPath = (option: string): string => `//a[contains(text(), "${option}")]`;
-        this.getCalendarIconXPath = (labelText: string): string => `//input[@id='${labelText}']`;
+        this.getUiOptionXPath = (option: string): string =>
+            `//a[contains(text(), "${option}")]`;
+        this.getCalendarIconXPath = (labelText: string): string =>
+            `//input[@id='${labelText}']`;
         this.getDatePickerMonthXPath = "//select[@class='ui-datepicker-month']";
         this.getActualCalenderDateYearXPath = `//span[@class='ui-datepicker-year']`;
-        this.getIFrameXPath = (iFrameId: string) => `//iframe[@id="${iFrameId}"]`;
+        this.getIFrameXPath = (iFrameId: string) =>
+            `//iframe[@id="${iFrameId}"]`;
         this.getInputTextBoxXPath = `//div[@class='rsw-ce']`;
         this.filledInputText = "";
         this.getPlaywrightTestingXPath = `//a/p[text()="Playwright Testing"]`;
@@ -123,7 +125,9 @@ class PocUiPage {
     }
 
     async validatePageHeading(expectedHeading: string): Promise<void> {
-        const actualHeading = await playwrightActions.waitAndGetInnerText(this.getPageHeadingXPath);
+        const actualHeading = await playwrightActions.waitAndGetInnerText(
+            this.getPageHeadingXPath,
+        );
         expect(actualHeading).toContain(expectedHeading);
     }
 
@@ -143,13 +147,13 @@ class PocUiPage {
         year: number;
     }> {
         const formats = [
-            'DD MMM YYYY',
-            'MMM DD YYYY',
-            'DD/MM/YYYY',
-            'DD MMMM YYYY',
-            'DD MM YY',
-            'YYYY-MM-DD',
-            'YYYYMMDD'
+            "DD MMM YYYY",
+            "MMM DD YYYY",
+            "DD/MM/YYYY",
+            "DD MMMM YYYY",
+            "DD MM YY",
+            "YYYY-MM-DD",
+            "YYYYMMDD",
         ];
 
         for (const format of formats) {
@@ -157,13 +161,15 @@ class PocUiPage {
             if (date.isValid()) {
                 return {
                     day: date.date(),
-                    month: date.format('MMM'),
-                    year: date.year()
+                    month: date.format("MMM"),
+                    year: date.year(),
                 };
             }
         }
 
-        throw new Error(`Invalid date format: '${inputDate}'. Supported formats are: ${formats.join(', ')}`);
+        throw new Error(
+            `Invalid date format: '${inputDate}'. Supported formats are: ${formats.join(", ")}`,
+        );
     }
 
     /**
@@ -173,7 +179,10 @@ class PocUiPage {
      * @param allowFutureDate - Optional flag to allow future dates (default: false).
      * @throws {Error} Throws an error if trying to navigate to a future year when not allowed.
      */
-    private async navigateToCalenderYear(expectedYear: string, allowFutureDate: boolean = false): Promise<void> {
+    private async navigateToCalenderYear(
+        expectedYear: string,
+        allowFutureDate: boolean = false,
+    ): Promise<void> {
         if (!allowFutureDate) {
             const currentYear = moment().year();
             if (Number(currentYear) < Number(expectedYear)) {
@@ -181,7 +190,10 @@ class PocUiPage {
             }
         }
 
-        let actualCalenderYear: string = await playwrightActions.waitAndGetInnerText(this.getActualCalenderDateYearXPath);
+        let actualCalenderYear: string =
+            await playwrightActions.waitAndGetInnerText(
+                this.getActualCalenderDateYearXPath,
+            );
         const diff: number = Number(expectedYear) - Number(actualCalenderYear);
 
         if (diff !== 0) {
@@ -190,12 +202,18 @@ class PocUiPage {
 
             if (diff > 0) {
                 for (let i = 0; i < diff; i++) {
-                    await playwrightActions.waitAndSelectOption(this.getDatePickerMonthXPath, "Dec");
+                    await playwrightActions.waitAndSelectOption(
+                        this.getDatePickerMonthXPath,
+                        "Dec",
+                    );
                     await playwrightActions.waitAndClick(nextButtonXPath);
                 }
             } else if (diff < 0) {
                 for (let i = 0; i < Math.abs(diff); i++) {
-                    await playwrightActions.waitAndSelectOption(this.getDatePickerMonthXPath, "Jan");
+                    await playwrightActions.waitAndSelectOption(
+                        this.getDatePickerMonthXPath,
+                        "Jan",
+                    );
                     await playwrightActions.waitAndClick(prevButtonXPath);
                 }
             }
@@ -210,19 +228,29 @@ class PocUiPage {
      * @returns {Promise<void>} Resolves once the date has been successfully selected in the calendar widget.
      */
     async selectDate(date: string, labelText: string): Promise<void> {
-        const {day, month, year} = await this.getDateParts(date);
+        const { day, month, year } = await this.getDateParts(date);
         const calendarInputXPath = this.getCalendarIconXPath(labelText);
         await playwrightActions.waitAndClick(calendarInputXPath);
 
         // The public demo has migrated between a jQuery widget and a plain input.
         // Keep both supported so the example remains useful across demo versions.
-        if (await playwrightActions.getElementCount(this.getActualCalenderDateYearXPath) === 0) {
-            await playwrightActions.waitAndFillInputBox(calendarInputXPath, date);
+        if (
+            (await playwrightActions.getElementCount(
+                this.getActualCalenderDateYearXPath,
+            )) === 0
+        ) {
+            await playwrightActions.waitAndFillInputBox(
+                calendarInputXPath,
+                date,
+            );
             return;
         }
 
         await this.navigateToCalenderYear(year.toString());
-        await playwrightActions.waitAndSelectOption(this.getDatePickerMonthXPath, month);
+        await playwrightActions.waitAndSelectOption(
+            this.getDatePickerMonthXPath,
+            month,
+        );
         await playwrightActions.waitAndClick(`//a[text()="${day}"]`);
     }
 
@@ -243,7 +271,10 @@ class PocUiPage {
      * @returns {Promise<void>} Resolves once the text has been filled in the iframe's text area.
      */
     async enterTextInIFrameTextArea(text: string): Promise<void> {
-        await playwrightActions.waitAndFillInputBox(this.getInputTextBoxXPath, text);
+        await playwrightActions.waitAndFillInputBox(
+            this.getInputTextBoxXPath,
+            text,
+        );
         this.filledInputText = text;
     }
 
@@ -253,7 +284,9 @@ class PocUiPage {
      * @returns {Promise<void>} Resolves once the verification is complete.
      */
     async verifyTextInIFrameTextArea(): Promise<void> {
-        const actualText = await playwrightActions.waitAndGetInnerText(this.getInputTextBoxXPath);
+        const actualText = await playwrightActions.waitAndGetInnerText(
+            this.getInputTextBoxXPath,
+        );
         expect(actualText).toBe(this.filledInputText);
     }
 
@@ -273,8 +306,12 @@ class PocUiPage {
      */
     async validateUserNavigatedToPlaywrightTesting(): Promise<void> {
         await playwrightActions.resetFrameLocator();
-        const actual = await playwrightActions.waitAndGetInnerText(this.getPageHeadingXPath);
-        expect(actual).toMatch(/Simple iframe|Playwright Testing|TestMu AI.*Documentation/);
+        const actual = await playwrightActions.waitAndGetInnerText(
+            this.getPageHeadingXPath,
+        );
+        expect(actual).toMatch(
+            /Simple iframe|Playwright Testing|TestMu AI.*Documentation/,
+        );
     }
 }
 

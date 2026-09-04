@@ -53,37 +53,37 @@ executable test and its diagnostic artifacts.
 
 ### What makes it different
 
-| Capability | This framework | Typical alternatives |
-| --- | --- | --- |
-| Test language | Gherkin scenarios mapped to typed TypeScript steps | Direct code-only specs or an unstructured mix of styles |
-| Source of truth | Features and TypeScript under `src/`; generated tests are disposable | Hand-maintained generated files or test code without a clear layering rule |
-| UI design | Page objects plus shared actions for waits, frames, files, and keyboard behavior | Repeated selectors and synchronization logic inside individual tests |
-| API coverage | First-class REST and GraphQL helpers with environment headers and configurable timeouts | Separate ad hoc request clients or browser-only coverage |
-| Response quality | Zod contracts can validate important API response shapes | Status-only assertions or duplicated object checks |
-| Environment handling | One `E2E` switch and centralized frontend/API/GraphQL configuration | URLs and credentials scattered through test files |
-| Failure evidence | Trace, video, screenshot, HAR, Allure, Monocart, and logger integration | A single console log or a screenshot without request context |
-| Agent collaboration | Repository-specific Planner, Generator, and Healer agents plus deterministic framework memory | Generic AI prompts that generate incompatible standalone specs |
-| Extensibility | Strict TypeScript, ESM, aliases, and clear UI/backend ownership boundaries | Framework-specific conventions that are difficult to enforce across teams |
+| Capability           | This framework                                                                                | Typical alternatives                                                       |
+| -------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Test language        | Gherkin scenarios mapped to typed TypeScript steps                                            | Direct code-only specs or an unstructured mix of styles                    |
+| Source of truth      | Features and TypeScript under `src/`; generated tests are disposable                          | Hand-maintained generated files or test code without a clear layering rule |
+| UI design            | Page objects plus shared actions for waits, frames, files, and keyboard behavior              | Repeated selectors and synchronization logic inside individual tests       |
+| API coverage         | First-class REST and GraphQL helpers with environment headers and configurable timeouts       | Separate ad hoc request clients or browser-only coverage                   |
+| Response quality     | Zod contracts can validate important API response shapes                                      | Status-only assertions or duplicated object checks                         |
+| Environment handling | One `E2E` switch and centralized frontend/API/GraphQL configuration                           | URLs and credentials scattered through test files                          |
+| Failure evidence     | Trace, video, screenshot, HAR, Allure, Monocart, and logger integration                       | A single console log or a screenshot without request context               |
+| Agent collaboration  | Repository-specific Planner, Generator, and Healer agents plus deterministic framework memory | Generic AI prompts that generate incompatible standalone specs             |
+| Extensibility        | Strict TypeScript, ESM, aliases, and clear UI/backend ownership boundaries                    | Framework-specific conventions that are difficult to enforce across teams  |
 
 ### Why teams may choose it
 
 1. **One workflow from requirement to evidence.** A scenario can be reviewed as
-  Gherkin, implemented through typed layers, generated with `bddgen`, and
-  diagnosed with the same configuration and reports.
+   Gherkin, implemented through typed layers, generated with `bddgen`, and
+   diagnosed with the same configuration and reports.
 2. **UI and API testing share one execution model.** Browser journeys,
-  GraphQL operations, and REST requests can be organized into the same BDD
-  suites while retaining their appropriate helpers and contracts.
+   GraphQL operations, and REST requests can be organized into the same BDD
+   suites while retaining their appropriate helpers and contracts.
 3. **The architecture makes ownership visible.** Features describe behavior,
-  steps translate intent, page/service objects own workflows, helpers own
-  mechanics, and contracts own response shape.
+   steps translate intent, page/service objects own workflows, helpers own
+   mechanics, and contracts own response shape.
 4. **Failure analysis is designed in.** Retained traces, videos, screenshots,
-  HAR files, structured reports, and immediate logging reduce the time between
-  a failure and a useful diagnosis.
+   HAR files, structured reports, and immediate logging reduce the time between
+   a failure and a useful diagnosis.
 5. **The framework is friendly to both humans and coding agents.** The memory
-  articles and custom agents encode local conventions, so generated changes
-  are expected to follow this repository instead of generic Playwright habits.
+   articles and custom agents encode local conventions, so generated changes
+   are expected to follow this repository instead of generic Playwright habits.
 6. **It stays portable.** It uses Playwright and TypeScript directly rather
-  than requiring a hosted test platform or proprietary execution service.
+   than requiring a hosted test platform or proprietary execution service.
 
 ### Is it objectively #1?
 
@@ -118,9 +118,9 @@ needs the same amount of abstraction.
 - npm `>=11.2.0`
 - Network access to install npm packages and Playwright browsers.
 - Network access to the configured integration services when running tests:
-  - Frontend: `https://www.lambdatest.com/selenium-playground`
-  - REST API: `https://fakestoreapi.com/`
-  - GraphQL API: `https://graphqlzero.almansi.me/api`
+    - Frontend: `https://www.lambdatest.com/selenium-playground`
+    - REST API: `https://fakestoreapi.com/`
+    - GraphQL API: `https://graphqlzero.almansi.me/api`
 
 Check the local versions:
 
@@ -174,18 +174,18 @@ npm run test:generate-bdd
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `npm run setup` | Install npm packages and Playwright browsers. |
-| `npm run test:generate-bdd` | Generate tests from all configured feature files. |
-| `npm run test:e2e` | Generate BDD tests and run the full Playwright suite. |
-| `npm run test:debug` | Generate tests and open the `suit1` project in Playwright debug mode. |
-| `npm run test:smoke` | Generate tests and run scenarios tagged `@suit1`. |
-| `npm run report:allure-serve` | Generate and serve the Allure results directory. |
-| `npm run report:allure-generate` | Build a static Allure report under `out/allure-results`. |
-| `npm run report:allure-open` | Open the generated Allure report. |
-| `npm run report:monocart-serve` | Serve the Monocart report. |
-| `npm run report:monocart-show` | Open the Monocart report. |
+| Command                          | Purpose                                                               |
+| -------------------------------- | --------------------------------------------------------------------- |
+| `npm run setup`                  | Install npm packages and Playwright browsers.                         |
+| `npm run test:generate-bdd`      | Generate tests from all configured feature files.                     |
+| `npm run test:e2e`               | Generate BDD tests and run the full Playwright suite.                 |
+| `npm run test:debug`             | Generate tests and open the `suit1` project in Playwright debug mode. |
+| `npm run test:smoke`             | Generate tests and run scenarios tagged `@suit1`.                     |
+| `npm run report:allure-serve`    | Generate and serve the Allure results directory.                      |
+| `npm run report:allure-generate` | Build a static Allure report under `out/allure-results`.              |
+| `npm run report:allure-open`     | Open the generated Allure report.                                     |
+| `npm run report:monocart-serve`  | Serve the Monocart report.                                            |
+| `npm run report:monocart-show`   | Open the Monocart report.                                             |
 
 Run one configured suite:
 
@@ -343,18 +343,18 @@ Do not hardcode service URLs in features, page objects, steps, or operations.
 
 ### Runtime defaults
 
-| Setting | Default |
-| --- | --- |
-| Browser | Chromium |
-| Headless | `true` |
-| Workers | `4` |
-| Retries | `0` |
-| General test timeout | `5 minutes` |
-| Expect timeout | `5 seconds` |
-| Navigation timeout | `10 seconds` |
-| Slow motion | `10 ms` |
+| Setting                       | Default                                                |
+| ----------------------------- | ------------------------------------------------------ |
+| Browser                       | Chromium                                               |
+| Headless                      | `true`                                                 |
+| Workers                       | `4`                                                    |
+| Retries                       | `0`                                                    |
+| General test timeout          | `5 minutes`                                            |
+| Expect timeout                | `5 seconds`                                            |
+| Navigation timeout            | `10 seconds`                                           |
+| Slow motion                   | `10 ms`                                                |
 | HAR, trace, video, screenshot | Disabled unless `E2E_CAPTURE_SENSITIVE_ARTIFACTS=true` |
-| Downloads | `out/downloads/` |
+| Downloads                     | `out/downloads/`                                       |
 
 Verbose diagnostics are opt-in with `E2E_VERBOSE=true`. This controls verbose
 logging and HAR capture because diagnostic artifacts can contain request data,
@@ -385,10 +385,10 @@ Change framework-wide defaults in `settings/ConfigSettings.ts` and execution beh
 
 The configuration defines three serial-per-project suites:
 
-| Project | Tag | Current examples |
-| --- | --- | --- |
-| `suit1` | `@suit1` | UI date-picker scenario |
-| `suit2` | `@suit2` | UI iframe scenario |
+| Project | Tag      | Current examples                     |
+| ------- | -------- | ------------------------------------ |
+| `suit1` | `@suit1` | UI date-picker scenario              |
+| `suit2` | `@suit2` | UI iframe scenario                   |
 | `suit3` | `@suit3` | GraphQL query and mutation scenarios |
 
 Apply the matching tag in a feature before selecting a project. Do not use an unconfigured tag and expect it to select a project.
@@ -416,10 +416,10 @@ The feature must match the configured globs in `ConfigSettings.ts`.
 Create or extend a matching `*_steps.ts` file and register steps with `createBdd()`:
 
 ```ts
-import {createBdd} from "playwright-bdd";
+import { createBdd } from "playwright-bdd";
 import productPage from "../pages/product_page";
 
-const {Given, When, Then} = createBdd();
+const { Given, When, Then } = createBdd();
 
 When(/^the user searches for "([^"]*)"$/, async function ({}, query: string) {
     await productPage.search(query);
@@ -461,13 +461,13 @@ critical values:
 
 ```ts
 await playwrightActions.waitAndFillSensitiveInputFromEnv(
-  this.passwordSelector,
-  "E2E_LOGIN_PASSWORD"
+    this.passwordSelector,
+    "E2E_LOGIN_PASSWORD",
 );
 
 await playwrightActions.waitAndFillSensitiveInput(
-  this.otpSelector,
-  oneTimeCode
+    this.otpSelector,
+    oneTimeCode,
 );
 ```
 
@@ -533,9 +533,9 @@ credentials.
 ```ts
 const mocking = new PlaywrightMockingAddon(page);
 await mocking.mockRestEndpoint("**/mock-api/products/42", {
-  method: "GET",
-  status: 500,
-  body: {message: "Mock service unavailable"}
+    method: "GET",
+    status: 500,
+    body: { message: "Mock service unavailable" },
 });
 ```
 
@@ -663,16 +663,16 @@ application can render sensitive data into its own DOM.
 The framework is materially more robust than the original proof-of-concept
 baseline. The main limitations have been reduced as follows:
 
-| Area | Current status |
-| --- | --- |
-| Installation | Reproducible `npm ci` setup with a retained lockfile. |
-| Execution | Correct suite tags and passing focused/full BDD runs. |
-| CI | Typecheck, BDD generation, focused Playwright execution, caching, and bounded artifact upload are configured. |
-| Environment | Invalid `E2E` values fail clearly; endpoint overrides support enterprise environments. |
-| Browser security | Fullscreen/incognito remain available; sandbox bypass and file access require explicit opt-in. |
-| Secret handling | Sensitive values have dedicated input methods, redacted logger output, generic transport errors, and secure artifact defaults. |
-| API reliability | Request contexts are disposed and GraphQL post IDs use variables rather than query interpolation. |
-| UI resilience | Current public date-picker/editor behavior is supported and the expanded suite passes. |
+| Area             | Current status                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Installation     | Reproducible `npm ci` setup with a retained lockfile.                                                                          |
+| Execution        | Correct suite tags and passing focused/full BDD runs.                                                                          |
+| CI               | Typecheck, BDD generation, focused Playwright execution, caching, and bounded artifact upload are configured.                  |
+| Environment      | Invalid `E2E` values fail clearly; endpoint overrides support enterprise environments.                                         |
+| Browser security | Fullscreen/incognito remain available; sandbox bypass and file access require explicit opt-in.                                 |
+| Secret handling  | Sensitive values have dedicated input methods, redacted logger output, generic transport errors, and secure artifact defaults. |
+| API reliability  | Request contexts are disposed and GraphQL post IDs use variables rather than query interpolation.                              |
+| UI resilience    | Current public date-picker/editor behavior is supported and the expanded suite passes.                                         |
 
 Validation baseline:
 

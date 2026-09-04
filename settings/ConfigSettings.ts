@@ -25,9 +25,13 @@
   ================================================================
 */
 
-import path from 'path';
-import chalk from "chalk"
-import {installConsoleRedaction, redactSensitiveText, redactValue} from "@SecureDiagnostics";
+import path from "path";
+import chalk from "chalk";
+import {
+    installConsoleRedaction,
+    redactSensitiveText,
+    redactValue,
+} from "@SecureDiagnostics";
 
 installConsoleRedaction();
 
@@ -36,17 +40,17 @@ installConsoleRedaction();
  */
 interface BddPaths {
     feature: string[]; // Paths to the BDD feature files
-    steps: string[];   // Paths to the BDD step definition files
+    steps: string[]; // Paths to the BDD step definition files
 }
 
 /**
  * Interface to define the directory paths for test results and other related files.
  */
 interface DirPaths {
-    testDir: string;   // Path to the directory for test files
+    testDir: string; // Path to the directory for test files
     outputDir: string; // Path to the directory for storing test results
     allureDir: string; // Path to the directory for the storing allure test results
-    monocartDir: string;  // Path to the directory for the storing mono-cart test results
+    monocartDir: string; // Path to the directory for the storing mono-cart test results
 }
 
 /**
@@ -54,16 +58,16 @@ interface DirPaths {
  * It holds settings for BDD feature files, step definition files, and directories for test results.
  */
 class ConfigSettings {
-    public verbose: boolean;           // Flag to enable or disable verbose logging
-    public bddPaths: BddPaths;         // Object holding paths for BDD feature and step files
-    public dirPaths: DirPaths;         // Object holding paths for test and result directories
-    public testTimeout: number;        // Timeout for assertions (in milliseconds)
-    public generalTimeout: number;     // General timeout (in milliseconds)
-    public headless: boolean;          // Flag for headless browser mode
-    public navigationTimeout: number;  // Timeout for navigation actions
-    public harLogs: string;            // Default static HAR log path
-    public downloadPath: string;       // Path to store downloaded files
-    public slowMo: number;             // Slow motion time between actions for debugging
+    public verbose: boolean; // Flag to enable or disable verbose logging
+    public bddPaths: BddPaths; // Object holding paths for BDD feature and step files
+    public dirPaths: DirPaths; // Object holding paths for test and result directories
+    public testTimeout: number; // Timeout for assertions (in milliseconds)
+    public generalTimeout: number; // General timeout (in milliseconds)
+    public headless: boolean; // Flag for headless browser mode
+    public navigationTimeout: number; // Timeout for navigation actions
+    public harLogs: string; // Default static HAR log path
+    public downloadPath: string; // Path to store downloaded files
+    public slowMo: number; // Slow motion time between actions for debugging
     public captureSensitiveArtifacts: boolean;
     public allowUnsafeChromium: boolean;
 
@@ -72,37 +76,39 @@ class ConfigSettings {
      * The constructor sets default paths for feature and step files, as well as default directory paths.
      */
     constructor() {
-        this.verbose = process.env.E2E_VERBOSE === 'true'; // Enable diagnostics explicitly
+        this.verbose = process.env.E2E_VERBOSE === "true"; // Enable diagnostics explicitly
 
         // Default paths for BDD feature and step definition files
         this.bddPaths = {
             feature: [
-                "./src/frontend/features/*.feature",  // Frontend feature files
-                "./src/backend/**/features/*.feature" // Backend feature files
+                "./src/frontend/features/*.feature", // Frontend feature files
+                "./src/backend/**/features/*.feature", // Backend feature files
             ],
             steps: [
-                "./src/frontend/step_definitions/*_steps.ts",  // Frontend step definition files
-                "./src/backend/**/step_definitions/*_steps.ts" // Backend step definition files
-            ]
+                "./src/frontend/step_definitions/*_steps.ts", // Frontend step definition files
+                "./src/backend/**/step_definitions/*_steps.ts", // Backend step definition files
+            ],
         };
 
         // Default directory paths for test results
         this.dirPaths = {
-            testDir: "./out/tests",                 // Directory for test files
-            outputDir: "./out/test-results",        // Directory for saving test results
+            testDir: "./out/tests", // Directory for test files
+            outputDir: "./out/test-results", // Directory for saving test results
             allureDir: "./out/test-results/allure-results", // Directory for saving allure test results
-            monocartDir: "./out/test-results/monocart-results" // Directory for saving monocart test results
+            monocartDir: "./out/test-results/monocart-results", // Directory for saving monocart test results
         };
 
-        this.testTimeout = 5000;                  // Default timeout for assertions (5 seconds)
-        this.generalTimeout = 5 * 60 * 1000;      // Default general timeout (5 minutes)
-        this.headless = true;                     // Default headless setting (true)
-        this.navigationTimeout = 10 * 1000;       // navigation timeout (Default 5 seconds)
-        this.harLogs = "./out/logs/harLogs/";     // Static path where all HAR logs are saved
-        this.downloadPath = "./out/downloads/";   // Path to store downloaded files
-        this.slowMo = 10;                         // Slow motion time between actions (0 for no delay)
-        this.captureSensitiveArtifacts = process.env.E2E_CAPTURE_SENSITIVE_ARTIFACTS === 'true';
-        this.allowUnsafeChromium = process.env.E2E_ALLOW_UNSAFE_CHROMIUM === 'true';
+        this.testTimeout = 5000; // Default timeout for assertions (5 seconds)
+        this.generalTimeout = 5 * 60 * 1000; // Default general timeout (5 minutes)
+        this.headless = true; // Default headless setting (true)
+        this.navigationTimeout = 10 * 1000; // navigation timeout (Default 5 seconds)
+        this.harLogs = "./out/logs/harLogs/"; // Static path where all HAR logs are saved
+        this.downloadPath = "./out/downloads/"; // Path to store downloaded files
+        this.slowMo = 10; // Slow motion time between actions (0 for no delay)
+        this.captureSensitiveArtifacts =
+            process.env.E2E_CAPTURE_SENSITIVE_ARTIFACTS === "true";
+        this.allowUnsafeChromium =
+            process.env.E2E_ALLOW_UNSAFE_CHROMIUM === "true";
     }
 
     /**
@@ -112,11 +118,10 @@ class ConfigSettings {
      * @returns {string} - The full path to the HAR log file.
      */
     generateHarLogFilePath(name: string): string {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');  // Format timestamp for the filename
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Format timestamp for the filename
         // Dynamically generate the HAR log file path with the name and timestamp
         return path.join(this.harLogs, `${name}-${timestamp}.zip`);
     }
-
 
     /**
      * Logs the message to the console with a timestamp and formatted output.
@@ -127,31 +132,39 @@ class ConfigSettings {
      * @param args - Additional arguments (e.g., objects) to be logged with the message.
      */
     consoleLogs(name: string, severity: string, message: string, args: any[]) {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');  // Format timestamp for the filename
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Format timestamp for the filename
 
         let color;
 
-        if (severity === 'verbose') {
+        if (severity === "verbose") {
             color = chalk.green;
-        } else if (severity === 'info') {
+        } else if (severity === "info") {
             color = chalk.blue;
-        } else if (severity === 'warning') {
+        } else if (severity === "warning") {
             color = chalk.yellow;
-        } else if (severity === 'error') {
+        } else if (severity === "error") {
             color = chalk.red;
         } else {
             color = chalk.white;
         }
 
         const safeMessage = redactSensitiveText(message);
-        const safeArgs = args.map(argument => this.redactValue(argument));
+        const safeArgs = args.map((argument) => this.redactValue(argument));
 
         if (safeArgs.length <= 0) {
-            console.info(color(`[${timestamp}]-[${name}]-[${severity}]-[${safeMessage}]`.toUpperCase()));
+            console.info(
+                color(
+                    `[${timestamp}]-[${name}]-[${severity}]-[${safeMessage}]`.toUpperCase(),
+                ),
+            );
         } else {
-            console.info(color(`[${timestamp}]-[${name}]-[${severity}]-[${safeMessage}]-[${JSON.stringify(safeArgs, null, 2)}]`));
+            console.info(
+                color(
+                    `[${timestamp}]-[${name}]-[${severity}]-[${safeMessage}]-[${JSON.stringify(safeArgs, null, 2)}]`,
+                ),
+            );
         }
-    };
+    }
 
     private redactValue(value: unknown): unknown {
         return redactValue(value);

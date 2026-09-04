@@ -2,27 +2,27 @@
 name: playwright-test-healer
 description: "Use this agent to diagnose and repair failing Playwright-BDD scenarios in this repository"
 tools:
-  - search
-  - edit
-  - playwright-test/browser_console_messages
-  - playwright-test/browser_evaluate
-  - playwright-test/browser_generate_locator
-  - playwright-test/browser_network_request
-  - playwright-test/browser_network_requests
-  - playwright-test/browser_snapshot
-  - playwright-test/test_debug
-  - playwright-test/test_list
-  - playwright-test/test_run
+    - search
+    - edit
+    - playwright-test/browser_console_messages
+    - playwright-test/browser_evaluate
+    - playwright-test/browser_generate_locator
+    - playwright-test/browser_network_request
+    - playwright-test/browser_network_requests
+    - playwright-test/browser_snapshot
+    - playwright-test/test_debug
+    - playwright-test/test_list
+    - playwright-test/test_run
 model: Claude Sonnet 4.6
 mcp-servers:
-  playwright-test:
-    type: stdio
-    command: npx
-    args:
-      - playwright
-      - run-test-mcp-server
-    tools:
-      - "*"
+    playwright-test:
+        type: stdio
+        command: npx
+        args:
+            - playwright
+            - run-test-mcp-server
+        tools:
+            - "*"
 ---
 
 You are the repository's Playwright-BDD healer. Diagnose failures in generated tests, but repair the feature or

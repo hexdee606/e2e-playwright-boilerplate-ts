@@ -32,14 +32,14 @@
   ================================================================
 */
 
-import {request} from "@playwright/test"; // Importing Playwright's request module
+import { request } from "@playwright/test"; // Importing Playwright's request module
 import envConf from "@envConf"; // Importing environment configuration (API base URL, headers, etc.)
-import {installConsoleRedaction} from "@SecureDiagnostics";
+import { installConsoleRedaction } from "@SecureDiagnostics";
 
 installConsoleRedaction();
 
 // Extract the backend configuration (URL and headers) from the environment configuration
-const {url, headers} = envConf.configs[envConf.env].backend.gql;
+const { url, headers } = envConf.configs[envConf.env].backend.gql;
 
 // Configuration interface for GraphQL requests
 interface Config {
@@ -64,7 +64,7 @@ class GraphQLHelper {
     // Default configuration for GraphQL requests
     private config: Config = {
         timeout: 5 * 1000, // Default timeout set to 5 seconds
-        ignoreHTTPSErrors: false // Default flag for ignoring HTTPS errors is set to false
+        ignoreHTTPSErrors: false, // Default flag for ignoring HTTPS errors is set to false
     };
 
     /**
@@ -76,7 +76,7 @@ class GraphQLHelper {
      */
     setConfig(options: Partial<Config>): void {
         // Merge the new configuration options with the existing configuration
-        this.config = {...this.config, ...options};
+        this.config = { ...this.config, ...options };
     }
 
     /**
@@ -89,7 +89,7 @@ class GraphQLHelper {
      */
     setBaseUrl(baseUrl: string): void {
         // Ensure the provided base URL is not empty or invalid
-        if (!baseUrl.trim()) throw new Error('Base URL cannot be empty');
+        if (!baseUrl.trim()) throw new Error("Base URL cannot be empty");
         this.baseUrl = baseUrl; // Set the base URL for GraphQL requests
     }
 
@@ -120,7 +120,7 @@ class GraphQLHelper {
     async sendRequest(
         query: string,
         variables: object = {},
-        headers: object = {}
+        headers: object = {},
     ): Promise<object> {
         // Create a new context for the HTTP request
         const context = await request.newContext();
@@ -129,19 +129,25 @@ class GraphQLHelper {
             // Perform the HTTP POST request with GraphQL query and variables as JSON body
             const response = await context.post(this.getBaseUrl(), {
                 timeout: this.config.timeout, // Set the request timeout from the config
-                data: JSON.stringify({query, variables}), // Stringify the query and variables
-                headers: {...this.headers, ...headers}, // Merge default and custom headers
-                ignoreHTTPSErrors: this.config.ignoreHTTPSErrors // Respect the ignoreHTTPS option
+                data: JSON.stringify({ query, variables }), // Stringify the query and variables
+                headers: { ...this.headers, ...headers }, // Merge default and custom headers
+                ignoreHTTPSErrors: this.config.ignoreHTTPSErrors, // Respect the ignoreHTTPS option
             });
 
             // Attempt to parse the response as JSON. If it fails, fallback to raw text.
-            const responseBody = await response.json().catch(() => response.text());
+            const responseBody = await response
+                .json()
+                .catch(() => response.text());
 
             // Return the response status code and the parsed response data
-            return {status: response.status(), data: responseBody};
+            return { status: response.status(), data: responseBody };
         } catch (error) {
-            console.error('GraphQL request failed. Detailed transport data is intentionally suppressed.');
-            throw new Error('GraphQL request failed. See secured diagnostics for authorized investigation.');
+            console.error(
+                "GraphQL request failed. Detailed transport data is intentionally suppressed.",
+            );
+            throw new Error(
+                "GraphQL request failed. See secured diagnostics for authorized investigation.",
+            );
         } finally {
             await context.dispose();
         }

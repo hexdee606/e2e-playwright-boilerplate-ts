@@ -2,7 +2,7 @@
  * Zod contract for a Fake Store product response.
  * The contract protects REST scenarios from undocumented response drift.
  */
-import {z} from "zod";
+import { z } from "zod";
 
 export const productResponseSchema = z.object({
     id: z.number().int().positive(),
@@ -13,6 +13,6 @@ export const productResponseSchema = z.object({
     image: z.string().url(),
     rating: z.object({
         rate: z.number().nonnegative(),
-        count: z.number().int().nonnegative()
-    })
+        count: z.number().int().nonnegative(),
+    }),
 });

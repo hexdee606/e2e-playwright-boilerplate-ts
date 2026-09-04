@@ -2,7 +2,7 @@
  * Deterministic UI component fixture for select, checkbox, and dialog flows.
  * It uses page-local markup so component scenarios do not depend on a public site.
  */
-import {expect, Page} from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import playwrightActions from "@PlaywrightActions";
 
 class MockComponentsPage {
@@ -45,7 +45,9 @@ class MockComponentsPage {
         await expect(page.locator("#country")).toHaveValue(country);
         await expect(page.locator("#terms")).toBeChecked();
         await expect(page.locator("#component-dialog")).toBeVisible();
-        await expect(page.locator("#component-dialog")).toContainText("Component dialog opened");
+        await expect(page.locator("#component-dialog")).toContainText(
+            "Component dialog opened",
+        );
     }
 }
 

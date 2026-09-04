@@ -30,9 +30,21 @@
   ================================================================
 */
 
-
-import {ElementHandle, expect, Frame, FrameLocator, Locator, Page} from "@playwright/test";
-import {installConsoleRedaction, redactSensitiveText, redactValue, registerSensitiveValue, secureError} from "@SecureDiagnostics";
+import {
+    ElementHandle,
+    expect,
+    Frame,
+    FrameLocator,
+    Locator,
+    Page,
+} from "@playwright/test";
+import {
+    installConsoleRedaction,
+    redactSensitiveText,
+    redactValue,
+    registerSensitiveValue,
+    secureError,
+} from "@SecureDiagnostics";
 
 installConsoleRedaction();
 
@@ -51,7 +63,7 @@ export enum keyboardShortcuts {
     switchTabNext = "Control+Tab",
     switchTabPrevious = "Control+Shift+Tab",
     focusAddressBar = "Control+L",
-    takeScreenshot = "Control+Shift+S"
+    takeScreenshot = "Control+Shift+S",
 }
 
 export class PlaywrightActions {
@@ -71,14 +83,23 @@ export class PlaywrightActions {
         return JSON.stringify(redactValue(value));
     }
 
-    private async setInputValueWithoutPlaywrightValueLogging(element: Locator, value: string): Promise<void> {
+    private async setInputValueWithoutPlaywrightValueLogging(
+        element: Locator,
+        value: string,
+    ): Promise<void> {
         registerSensitiveValue(value);
         await element.evaluate((node, secretValue) => {
             const input = node as HTMLInputElement | HTMLTextAreaElement;
             input.focus();
             input.value = secretValue;
-            input.dispatchEvent(new InputEvent("input", {bubbles: true, data: null, inputType: "insertText"}));
-            input.dispatchEvent(new Event("change", {bubbles: true}));
+            input.dispatchEvent(
+                new InputEvent("input", {
+                    bubbles: true,
+                    data: null,
+                    inputType: "insertText",
+                }),
+            );
+            input.dispatchEvent(new Event("change", { bubbles: true }));
         }, value);
     }
 
@@ -93,7 +114,7 @@ export class PlaywrightActions {
             this.frameLocator = null;
         } catch (error) {
             console.error("Error setting page:", error);
-            throw new Error("Failed to set the page.");  // Providing more context on failure
+            throw new Error("Failed to set the page."); // Providing more context on failure
         }
     }
 
@@ -116,11 +137,13 @@ export class PlaywrightActions {
             }
 
             if (!this.frameLocator) {
-                throw new Error("Unable to find the frame using the given selector.");
+                throw new Error(
+                    "Unable to find the frame using the given selector.",
+                );
             }
         } catch (error) {
             console.error("Error setting frame:", error);
-            throw new Error("Failed to set frame locator.");  // Provide clearer error message
+            throw new Error("Failed to set frame locator."); // Provide clearer error message
         }
     }
 
@@ -138,7 +161,7 @@ export class PlaywrightActions {
      */
     async getFrame(): Promise<Page | Frame | FrameLocator> {
         if (!this.page) {
-            throw new Error('Please set the page first');
+            throw new Error("Please set the page first");
         }
         if (!this.frameLocator) {
             return this.page;
@@ -156,11 +179,13 @@ export class PlaywrightActions {
         try {
             await this.page?.goto(url, {
                 waitUntil: "load",
-                timeout: 1000
+                timeout: 1000,
             });
         } catch (error) {
             console.error("Error navigating to URL:", error);
-            throw new Error("Navigation failed to URL: " + redactSensitiveText(url));
+            throw new Error(
+                "Navigation failed to URL: " + redactSensitiveText(url),
+            );
         }
     }
 
@@ -175,8 +200,13 @@ export class PlaywrightActions {
             const frame = await this.getFrame();
             return await frame.locator(selector).count();
         } catch (error) {
-            console.error(`Error getting element count for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve element count for selector: ${this.safeSelector(selector)}`);
+            console.error(
+                `Error getting element count for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve element count for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -189,7 +219,7 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
             // Check if it's not already checked, then check it
@@ -198,8 +228,13 @@ export class PlaywrightActions {
             }
             await expect(await element.isChecked()).toBeTruthy();
         } catch (error) {
-            console.error(`Error interacting with checkbox for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check the checkbox for selector: ${this.safeSelector(selector)}`);
+            console.error(
+                `Error interacting with checkbox for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check the checkbox for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -212,7 +247,7 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
             // Uncheck if it's currently checked
@@ -222,8 +257,13 @@ export class PlaywrightActions {
 
             await expect(await element.isChecked()).toBeFalsy();
         } catch (error) {
-            console.error(`Error interacting with checkbox for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to uncheck the checkbox for selector: ${this.safeSelector(selector)}`);
+            console.error(
+                `Error interacting with checkbox for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to uncheck the checkbox for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -236,13 +276,18 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.click();
         } catch (error) {
-            console.error(`Error interacting with button for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to click the element for selector: ${this.safeSelector(selector)}`);
+            console.error(
+                `Error interacting with button for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to click the element for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -255,13 +300,18 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.dblclick();
         } catch (error) {
-            console.error(`Error interacting with element for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to double-click the element for selector: ${this.safeSelector(selector)}`);
+            console.error(
+                `Error interacting with element for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to double-click the element for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -274,14 +324,19 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.isEditable(); // Optional depending on the element type
             await element.clear(); // Clear the input box
         } catch (error) {
-            console.error(`Error clearing input box for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to clear input box for selector: ${this.safeSelector(selector)}`);  // Provide more context
+            console.error(
+                `Error clearing input box for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to clear input box for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -295,7 +350,7 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
             // Ensure the element is enabled and editable before clearing and filling
@@ -304,8 +359,13 @@ export class PlaywrightActions {
             await element.clear(); // Clear the input box
             await element.fill(value); // Fill the input box with the value
         } catch (error) {
-            console.error(`Error filling input box for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to fill input box for selector: ${this.safeSelector(selector)}`);  // Provide more context
+            console.error(
+                `Error filling input box for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to fill input box for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -313,17 +373,25 @@ export class PlaywrightActions {
      * Fills a sensitive field without exposing its value in diagnostics.
      * Use this for passwords, tokens, OTPs, recovery codes, and personal data.
      */
-    async waitAndFillSensitiveInput(selector: string, value: string): Promise<void> {
+    async waitAndFillSensitiveInput(
+        selector: string,
+        value: string,
+    ): Promise<void> {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.isEditable();
-            await this.setInputValueWithoutPlaywrightValueLogging(element, value);
+            await this.setInputValueWithoutPlaywrightValueLogging(
+                element,
+                value,
+            );
         } catch {
-            throw new Error(`Failed to fill sensitive input for selector: ${this.safeSelector(selector)}`);
+            throw new Error(
+                `Failed to fill sensitive input for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -331,10 +399,15 @@ export class PlaywrightActions {
      * Fills a sensitive field from a process environment variable.
      * Secret values must be supplied by a local secret store or CI secret.
      */
-    async waitAndFillSensitiveInputFromEnv(selector: string, environmentVariable: string): Promise<void> {
+    async waitAndFillSensitiveInputFromEnv(
+        selector: string,
+        environmentVariable: string,
+    ): Promise<void> {
         const value = process.env[environmentVariable];
         if (!value) {
-            throw new Error(`Required secret environment variable is missing: ${this.safeSelector(environmentVariable)}`);
+            throw new Error(
+                `Required secret environment variable is missing: ${this.safeSelector(environmentVariable)}`,
+            );
         }
         await this.waitAndFillSensitiveInput(selector, value);
     }
@@ -343,17 +416,26 @@ export class PlaywrightActions {
      * Types sensitive input sequentially without including the value in errors.
      * Prefer waitAndFillSensitiveInput unless key-by-key events are required.
      */
-    async waitAndTypeSensitiveInput(selector: string, value: string, delay: number = 100): Promise<void> {
+    async waitAndTypeSensitiveInput(
+        selector: string,
+        value: string,
+        delay: number = 100,
+    ): Promise<void> {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.isEditable();
-            await this.setInputValueWithoutPlaywrightValueLogging(element, value);
+            await this.setInputValueWithoutPlaywrightValueLogging(
+                element,
+                value,
+            );
         } catch {
-            throw new Error(`Failed to type sensitive input for selector: ${this.safeSelector(selector)}`);
+            throw new Error(
+                `Failed to type sensitive input for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -364,13 +446,15 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.isEditable();
             await element.clear();
         } catch {
-            throw new Error(`Failed to clear sensitive input for selector: ${this.safeSelector(selector)}`);
+            throw new Error(
+                `Failed to clear sensitive input for selector: ${this.safeSelector(selector)}`,
+            );
         }
     }
 
@@ -384,20 +468,25 @@ export class PlaywrightActions {
     async waitAndFillInputBoxSequentially(
         selector: string,
         value: string,
-        delay: number = 100
+        delay: number = 100,
     ): Promise<void> {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEditable();
 
             // Type the value sequentially with a delay
-            await element.pressSequentially(value, {delay: delay});
+            await element.pressSequentially(value, { delay: delay });
         } catch (error) {
-            console.error(`Error typing in input box sequentially for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to type in input box sequentially for selector: ${this.safeSelector(selector)}`);  // Provide more context
+            console.error(
+                `Error typing in input box sequentially for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to type in input box sequentially for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -408,16 +497,24 @@ export class PlaywrightActions {
      * @returns The value of the attribute, or null if not found.
      * @throws Will throw an error if the attribute cannot be retrieved.
      */
-    async waitAndGetAttributeValue(selector: string, attribute: string): Promise<string | null> {
+    async waitAndGetAttributeValue(
+        selector: string,
+        attribute: string,
+    ): Promise<string | null> {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.getAttribute(attribute);
         } catch (error) {
-            console.error(`Error getting attribute "${this.safeSelector(attribute)}" for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve attribute "${this.safeSelector(attribute)}" for selector: ${this.safeSelector(selector)}`);  // Provide more context
+            console.error(
+                `Error getting attribute "${this.safeSelector(attribute)}" for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve attribute "${this.safeSelector(attribute)}" for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -430,13 +527,18 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
             await element.hover();
         } catch (error) {
-            console.error(`Error hovering over element for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to hover over element for selector: ${this.safeSelector(selector)}`);  // Provide more context
+            console.error(
+                `Error hovering over element for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to hover over element for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -450,12 +552,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.innerHTML();
         } catch (error) {
-            console.error(`Error getting inner HTML for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve inner HTML for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error getting inner HTML for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve inner HTML for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -469,12 +576,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.innerText();
         } catch (error) {
-            console.error(`Error getting inner text for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve inner text for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error getting inner text for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve inner text for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -488,12 +600,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.inputValue();
         } catch (error) {
-            console.error(`Error getting input value for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve input value for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error getting input value for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve input value for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -507,12 +624,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.allInnerTexts();
         } catch (error) {
-            console.error(`Error getting all inner texts for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to retrieve inner texts for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error getting all inner texts for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to retrieve inner texts for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -526,12 +648,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isChecked();
         } catch (error) {
-            console.error(`Error checking the state of checkbox for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check the state of checkbox for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking the state of checkbox for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check the state of checkbox for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -545,12 +672,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isDisabled();
         } catch (error) {
-            console.error(`Error checking if element is disabled for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check if element is disabled for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking if element is disabled for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check if element is disabled for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -564,12 +696,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isEditable();
         } catch (error) {
-            console.error(`Error checking if element is editable for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check if element is editable for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking if element is editable for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check if element is editable for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -583,12 +720,17 @@ export class PlaywrightActions {
         try {
             const frame = await this.getFrame();
             const element = await frame.locator(selector);
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isEnabled();
         } catch (error) {
-            console.error(`Error checking if element is enabled for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check if element is enabled for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking if element is enabled for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check if element is enabled for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -604,8 +746,13 @@ export class PlaywrightActions {
             const element = await frame.locator(selector);
             return await element.isHidden();
         } catch (error) {
-            console.error(`Error checking if element is hidden for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check if element is hidden for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking if element is hidden for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check if element is hidden for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -621,8 +768,13 @@ export class PlaywrightActions {
             const element = await frame.locator(selector);
             return await element.isVisible();
         } catch (error) {
-            console.error(`Error checking if element is visible for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to check if element is visible for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error checking if element is visible for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to check if element is visible for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -632,22 +784,30 @@ export class PlaywrightActions {
      * @param shortcut - The keyboard shortcut to be pressed.
      * @throws Will throw an error if the keyboard shortcut action fails.
      */
-    async waitAndKeyboardShortcuts(selector: string, shortcut: keyboardShortcuts): Promise<void> {
+    async waitAndKeyboardShortcuts(
+        selector: string,
+        shortcut: keyboardShortcuts,
+    ): Promise<void> {
         try {
             // Get the frame context where the element is located
             const frame = await this.getFrame();
             const element = frame.locator(selector);
 
             // Wait for the element to be visible and interactable
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.click(); // Click to focus the element before pressing the shortcut
 
             // Perform the keyboard shortcut
             await this.page?.keyboard.press(shortcut);
         } catch (error) {
-            console.error(`Error performing keyboard shortcut for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to perform keyboard shortcut for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error performing keyboard shortcut for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to perform keyboard shortcut for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -657,14 +817,17 @@ export class PlaywrightActions {
      * @param keys - The key(s) to be pressed. It can be a string (for a single key) or an array (for multiple keys).
      * @throws Will throw an error if the key press action fails.
      */
-    async waitAndPressKey(selector: string, keys: string | string[]): Promise<void> {
+    async waitAndPressKey(
+        selector: string,
+        keys: string | string[],
+    ): Promise<void> {
         try {
             // Get the frame context where the element is located
             const frame = await this.getFrame();
             const element = frame.locator(selector);
 
             // Wait for the element to be visible and interactable
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.click(); // Click to focus the element before pressing the keys
 
@@ -676,8 +839,13 @@ export class PlaywrightActions {
                 await this.page?.keyboard.press(key);
             }
         } catch (error) {
-            console.error(`Error pressing keys for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to press keys for selector: ${this.safeSelector(selector)}`); // Provide more context
+            console.error(
+                `Error pressing keys for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to press keys for selector: ${this.safeSelector(selector)}`,
+            ); // Provide more context
         }
     }
 
@@ -689,7 +857,14 @@ export class PlaywrightActions {
      */
     async waitAndSelectOption(
         selector: string,
-        option: null | string | ElementHandle | Array<string> | Object | Array<ElementHandle> | Array<Object>
+        option:
+            | null
+            | string
+            | ElementHandle
+            | Array<string>
+            | Object
+            | Array<ElementHandle>
+            | Array<Object>,
     ): Promise<void> {
         try {
             // Get the frame context where the element is located
@@ -697,14 +872,19 @@ export class PlaywrightActions {
             const element = frame.locator(selector);
 
             // Wait for the element to be visible and interactable
-            await element.waitFor({state: "visible"});
+            await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
             // Select the option(s)
             await element.selectOption(option);
         } catch (error) {
-            console.error(`Error selecting option for selector "${this.safeSelector(selector)}":`, error);
-            throw new Error(`Failed to select option for selector: ${this.safeSelector(selector)} with option: ${this.safeValue(option)}`); // Provide more context
+            console.error(
+                `Error selecting option for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw new Error(
+                `Failed to select option for selector: ${this.safeSelector(selector)} with option: ${this.safeValue(option)}`,
+            ); // Provide more context
         }
     }
 
@@ -716,12 +896,15 @@ export class PlaywrightActions {
      * @returns {Promise<string>} - The path to the downloaded file.
      * @throws Will throw an error if the download fails.
      */
-    async waitAndDownloadFile(selector: string, downloadPath: string = '../downloads'): Promise<string> {
+    async waitAndDownloadFile(
+        selector: string,
+        downloadPath: string = "../downloads",
+    ): Promise<string> {
         try {
             const frame = await this.getFrame();
 
             // Wait for the download event
-            const downloadPromise = this.page?.waitForEvent('download');
+            const downloadPromise = this.page?.waitForEvent("download");
 
             // Click the element that triggers the download
             await this.waitAndClick(selector);
@@ -737,8 +920,14 @@ export class PlaywrightActions {
 
             return suggestedFilePath; // Return the path to the downloaded file
         } catch (error) {
-            console.error(`Error downloading file for selector "${this.safeSelector(selector)}":`, error);
-            throw secureError(`Failed to download file for selector: ${this.safeSelector(selector)}`, error);
+            console.error(
+                `Error downloading file for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw secureError(
+                `Failed to download file for selector: ${this.safeSelector(selector)}`,
+                error,
+            );
         }
     }
 
@@ -749,7 +938,10 @@ export class PlaywrightActions {
      * @param {(string|string[])} filePath - The path(s) of the file(s) to upload. Can be a single file path or an array of paths.
      * @throws Will throw an error if the upload fails.
      */
-    async waitAndUploadFile(selector: string, filePath: string | string[]): Promise<void> {
+    async waitAndUploadFile(
+        selector: string,
+        filePath: string | string[],
+    ): Promise<void> {
         try {
             const frame = await this.getFrame();
             const input = await frame.locator(selector);
@@ -761,11 +953,16 @@ export class PlaywrightActions {
                 await input.setInputFiles(filePath); // Upload a single file
             }
         } catch (error) {
-            console.error(`Error uploading file(s) for selector "${this.safeSelector(selector)}":`, error);
-            throw secureError(`Failed to upload file(s) for selector: ${this.safeSelector(selector)}`, error);
+            console.error(
+                `Error uploading file(s) for selector "${this.safeSelector(selector)}":`,
+                error,
+            );
+            throw secureError(
+                `Failed to upload file(s) for selector: ${this.safeSelector(selector)}`,
+                error,
+            );
         }
     }
-
 }
 
 export default new PlaywrightActions();

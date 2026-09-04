@@ -37,6 +37,6 @@ export interface PostInput {
 export const input: { input: PostInput } = {
     input: {
         title: "",
-        body: ""
-    }
+        body: "",
+    },
 };

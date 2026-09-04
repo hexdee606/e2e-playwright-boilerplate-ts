@@ -1,15 +1,19 @@
-import {spawnSync} from "node:child_process";
+import { spawnSync } from "node:child_process";
 
 const playwrightArgs = process.argv.slice(2);
 
 function run(command, args) {
-    const executable = command === "npm" && process.env.npm_execpath ? process.execPath : command;
-    const executableArgs = command === "npm" && process.env.npm_execpath
-        ? [process.env.npm_execpath, ...args]
-        : args;
+    const executable =
+        command === "npm" && process.env.npm_execpath
+            ? process.execPath
+            : command;
+    const executableArgs =
+        command === "npm" && process.env.npm_execpath
+            ? [process.env.npm_execpath, ...args]
+            : args;
     const result = spawnSync(executable, executableArgs, {
         stdio: "inherit",
-        shell: false
+        shell: false,
     });
 
     if (result.error) {

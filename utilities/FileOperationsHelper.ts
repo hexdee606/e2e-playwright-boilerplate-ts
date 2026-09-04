@@ -18,8 +18,8 @@
   ================================================================
 */
 
-import {existsSync, readdirSync, rmdirSync, statSync, unlinkSync} from 'fs';
-import * as path from 'path';
+import { existsSync, readdirSync, rmdirSync, statSync, unlinkSync } from "fs";
+import * as path from "path";
 
 interface Table {
     rawTable: any[][];
@@ -60,10 +60,13 @@ class FileOperationsHelper {
      * @param {string} replacementTerm - The replacement term.
      * @returns {string} The modified string.
      */
-    async replaceAllOccurrences(inputString: string, searchTerm: string, replacementTerm: string): Promise<string> {
+    async replaceAllOccurrences(
+        inputString: string,
+        searchTerm: string,
+        replacementTerm: string,
+    ): Promise<string> {
         return inputString.split(searchTerm).join(replacementTerm);
     }
-
 
     /**
      * Converts an epoch timestamp to a human-readable date string using native Date.
@@ -72,8 +75,8 @@ class FileOperationsHelper {
      */
     async formatEpochToDate(epochTimestamp: number): Promise<string> {
         const date = new Date(epochTimestamp);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
     }
@@ -84,16 +87,21 @@ class FileOperationsHelper {
      * @param {number} decimalPlaces - The number of decimal places.
      * @returns {string} The formatted number as a string.
      */
-    async roundToDecimalPlaces(number: number, decimalPlaces: number): Promise<string> {
+    async roundToDecimalPlaces(
+        number: number,
+        decimalPlaces: number,
+    ): Promise<string> {
         if (isNaN(number) || decimalPlaces < 0) {
-            console.error('Invalid input. Please provide valid numbers for value and decimal places.');
-            return '';
+            console.error(
+                "Invalid input. Please provide valid numbers for value and decimal places.",
+            );
+            return "";
         }
 
         const roundedNumber = number.toFixed(decimalPlaces);
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat("en-US", {
             minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces
+            maximumFractionDigits: decimalPlaces,
         }).format(parseFloat(roundedNumber));
     }
 
@@ -105,9 +113,15 @@ class FileOperationsHelper {
      * @returns {boolean} True if the value is within the range, false otherwise.
      * @throws {Error} Throws an error if the value is out of range.
      */
-    async isValueInRange(value: number, minValue: number, maxValue: number): Promise<boolean> {
+    async isValueInRange(
+        value: number,
+        minValue: number,
+        maxValue: number,
+    ): Promise<boolean> {
         if (value < minValue || value > maxValue) {
-            throw new Error(`Value (${value}) is not between ${minValue} and ${maxValue}.`);
+            throw new Error(
+                `Value (${value}) is not between ${minValue} and ${maxValue}.`,
+            );
         }
         console.log(`Value (${value}) is between ${minValue} and ${maxValue}.`);
         return true;
@@ -119,18 +133,23 @@ class FileOperationsHelper {
      * @param {number} percentage - The percentage range to calculate the min and max values.
      * @returns {Object} An object containing the minimum and maximum values.
      */
-    async calculateMinAndMaxBasedOnPercentage(value: number, percentage: number): Promise<{
-        min: number | null,
-        max: number | null
+    async calculateMinAndMaxBasedOnPercentage(
+        value: number,
+        percentage: number,
+    ): Promise<{
+        min: number | null;
+        max: number | null;
     }> {
         if (percentage < 0) {
-            console.error('Invalid input. Please provide valid numbers for value and percentage.');
-            return {min: null, max: null};
+            console.error(
+                "Invalid input. Please provide valid numbers for value and percentage.",
+            );
+            return { min: null, max: null };
         }
         const percentageDecimal = percentage / 100;
         return {
-            min: Math.round(value - (percentageDecimal * value)),
-            max: Math.round(value + (percentageDecimal * value))
+            min: Math.round(value - percentageDecimal * value),
+            max: Math.round(value + percentageDecimal * value),
         };
     }
 
@@ -141,13 +160,24 @@ class FileOperationsHelper {
      * @param {boolean} [addEllipsis=false] - Whether to add an ellipsis if the string exceeds the maximum length.
      * @returns {string} The trimmed string.
      */
-    async truncateStringWithEllipsis(inputString: string, length: number, addEllipsis: boolean = false): Promise<string> {
+    async truncateStringWithEllipsis(
+        inputString: string,
+        length: number,
+        addEllipsis: boolean = false,
+    ): Promise<string> {
         if (length < 0) {
-            console.error('Invalid input. Please provide a valid string and length.');
-            return '';
+            console.error(
+                "Invalid input. Please provide a valid string and length.",
+            );
+            return "";
         }
-        const truncated = inputString.length > length ? inputString.slice(0, length) : inputString;
-        return addEllipsis && truncated.length < inputString.length ? `${truncated}...` : truncated;
+        const truncated =
+            inputString.length > length
+                ? inputString.slice(0, length)
+                : inputString;
+        return addEllipsis && truncated.length < inputString.length
+            ? `${truncated}...`
+            : truncated;
     }
 
     /**
@@ -157,7 +187,7 @@ class FileOperationsHelper {
      */
     async convertTableToObjectArray(table: Table): Promise<RowData[]> {
         if (!table || !table.rawTable || table.rawTable.length === 0) {
-            console.error('Invalid table format.');
+            console.error("Invalid table format.");
             return [];
         }
 
@@ -179,9 +209,13 @@ class FileOperationsHelper {
      * @param {number} number - The number to round.
      * @returns {string} The rounded number as a string.
      */
-    async roundToNearestIntegerOrDecimal(number: number): Promise<number | string> {
+    async roundToNearestIntegerOrDecimal(
+        number: number,
+    ): Promise<number | string> {
         let rounded = Math.round(number);
-        return rounded === 0 ? parseFloat(number.toFixed(1)) : rounded.toLocaleString('en-US', {maximumFractionDigits: 0});
+        return rounded === 0
+            ? parseFloat(number.toFixed(1))
+            : rounded.toLocaleString("en-US", { maximumFractionDigits: 0 });
     }
 
     /**
@@ -190,7 +224,10 @@ class FileOperationsHelper {
      * @returns {Promise<string>} The capitalized string.
      */
     async capitalizeFirstLetter(inputString: string): Promise<string> {
-        return inputString.charAt(0).toUpperCase() + inputString.slice(1).toLowerCase();
+        return (
+            inputString.charAt(0).toUpperCase() +
+            inputString.slice(1).toLowerCase()
+        );
     }
 
     /**
@@ -199,10 +236,13 @@ class FileOperationsHelper {
      * @param {string} [currencyCode='USD'] - The currency code (default is USD).
      * @returns {string} The formatted currency string.
      */
-    async formatCurrency(amount: number, currencyCode: string = 'USD'): Promise<string> {
-        const formatter = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currencyCode
+    async formatCurrency(
+        amount: number,
+        currencyCode: string = "USD",
+    ): Promise<string> {
+        const formatter = new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: currencyCode,
         });
         return formatter.format(amount);
     }

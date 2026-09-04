@@ -1,6 +1,7 @@
 const REDACTED = "[REDACTED]";
 
-const SENSITIVE_KEY_PATTERN = /authorization|cookie|set-cookie|password|passwd|pwd|token|secret|api[-_]?key|access[-_]?key|refresh[-_]?token|id[-_]?token|session|credential|otp|mfa|private[-_]?key/i;
+const SENSITIVE_KEY_PATTERN =
+    /authorization|cookie|set-cookie|password|passwd|pwd|token|secret|api[-_]?key|access[-_]?key|refresh[-_]?token|id[-_]?token|session|credential|otp|mfa|private[-_]?key/i;
 
 const SENSITIVE_TEXT_PATTERNS: Array<[RegExp, string]> = [
     [/\bBearer\s+[a-z0-9._~+/=-]+/gi, `Bearer ${REDACTED}`],
@@ -8,8 +9,14 @@ const SENSITIVE_TEXT_PATTERNS: Array<[RegExp, string]> = [
     [/\b(AKIA|ASIA)[A-Z0-9]{16}\b/g, REDACTED],
     [/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, REDACTED],
     [/\bsk-[A-Za-z0-9_-]{20,}\b/g, REDACTED],
-    [/\b([A-Za-z0-9_-]*?(?:password|passwd|pwd|token|secret|api[-_]?key|authorization|cookie|session|credential|otp|mfa)[A-Za-z0-9_-]*?)\s*[:=]\s*("[^"]*"|'[^']*'|[^\s,;]+)/gi, `$1=${REDACTED}`],
-    [/([?&](?:password|passwd|pwd|token|secret|api[-_]?key|authorization|cookie|session|credential|otp|mfa)=)[^&#\s]+/gi, `$1${REDACTED}`]
+    [
+        /\b([A-Za-z0-9_-]*?(?:password|passwd|pwd|token|secret|api[-_]?key|authorization|cookie|session|credential|otp|mfa)[A-Za-z0-9_-]*?)\s*[:=]\s*("[^"]*"|'[^']*'|[^\s,;]+)/gi,
+        `$1=${REDACTED}`,
+    ],
+    [
+        /([?&](?:password|passwd|pwd|token|secret|api[-_]?key|authorization|cookie|session|credential|otp|mfa)=)[^&#\s]+/gi,
+        `$1${REDACTED}`,
+    ],
 ];
 
 const knownSecretValues = new Set<string>();
@@ -44,20 +51,36 @@ export function redactSensitiveText(value: string): string {
     return safeValue;
 }
 
-export function redactValue<T>(value: T, seen = new WeakSet<object>()): T | unknown {
+export function redactValue<T>(
+    value: T,
+    seen = new WeakSet<object>(),
+): T | unknown {
     if (typeof value === "string") return redactSensitiveText(value);
-    if (typeof value === "number" || typeof value === "boolean" || value === null || value === undefined) return value;
+    if (
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        value === null ||
+        value === undefined
+    )
+        return value;
     if (value instanceof Error) return redactError(value);
-    if (Array.isArray(value)) return value.map(item => redactValue(item, seen));
+    if (Array.isArray(value))
+        return value.map((item) => redactValue(item, seen));
 
     if (typeof value === "object") {
         if (seen.has(value)) return "[Circular]";
         seen.add(value);
 
-        return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, item]) => [
-            key,
-            SENSITIVE_KEY_PATTERN.test(key) ? REDACTED : redactValue(item, seen)
-        ]));
+        return Object.fromEntries(
+            Object.entries(value as Record<string, unknown>).map(
+                ([key, item]) => [
+                    key,
+                    SENSITIVE_KEY_PATTERN.test(key)
+                        ? REDACTED
+                        : redactValue(item, seen),
+                ],
+            ),
+        );
     }
 
     return value;
@@ -82,8 +105,11 @@ export function installConsoleRedaction(): void {
     if (consoleRedactionInstalled) return;
     consoleRedactionInstalled = true;
 
-    (["debug", "error", "info", "log", "trace", "warn"] as const).forEach(method => {
-        const original = console[method].bind(console);
-        console[method] = (...args: unknown[]) => original(...args.map(argument => redactValue(argument)));
-    });
+    (["debug", "error", "info", "log", "trace", "warn"] as const).forEach(
+        (method) => {
+            const original = console[method].bind(console);
+            console[method] = (...args: unknown[]) =>
+                original(...args.map((argument) => redactValue(argument)));
+        },
+    );
 }

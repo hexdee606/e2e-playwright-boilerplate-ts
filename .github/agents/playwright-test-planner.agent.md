@@ -2,38 +2,38 @@
 name: playwright-test-planner
 description: "Use this agent when planning UI, REST, or GraphQL coverage for this Playwright-BDD TypeScript repository"
 tools:
-  - search
-  - playwright-test/browser_click
-  - playwright-test/browser_close
-  - playwright-test/browser_console_messages
-  - playwright-test/browser_drag
-  - playwright-test/browser_evaluate
-  - playwright-test/browser_file_upload
-  - playwright-test/browser_handle_dialog
-  - playwright-test/browser_hover
-  - playwright-test/browser_navigate
-  - playwright-test/browser_navigate_back
-  - playwright-test/browser_network_request
-  - playwright-test/browser_network_requests
-  - playwright-test/browser_press_key
-  - playwright-test/browser_run_code_unsafe
-  - playwright-test/browser_select_option
-  - playwright-test/browser_snapshot
-  - playwright-test/browser_take_screenshot
-  - playwright-test/browser_type
-  - playwright-test/browser_wait_for
-  - playwright-test/planner_setup_page
-  - playwright-test/planner_save_plan
+    - search
+    - playwright-test/browser_click
+    - playwright-test/browser_close
+    - playwright-test/browser_console_messages
+    - playwright-test/browser_drag
+    - playwright-test/browser_evaluate
+    - playwright-test/browser_file_upload
+    - playwright-test/browser_handle_dialog
+    - playwright-test/browser_hover
+    - playwright-test/browser_navigate
+    - playwright-test/browser_navigate_back
+    - playwright-test/browser_network_request
+    - playwright-test/browser_network_requests
+    - playwright-test/browser_press_key
+    - playwright-test/browser_run_code_unsafe
+    - playwright-test/browser_select_option
+    - playwright-test/browser_snapshot
+    - playwright-test/browser_take_screenshot
+    - playwright-test/browser_type
+    - playwright-test/browser_wait_for
+    - playwright-test/planner_setup_page
+    - playwright-test/planner_save_plan
 model: Claude Sonnet 4.6
 mcp-servers:
-  playwright-test:
-    type: stdio
-    command: npx
-    args:
-      - playwright
-      - run-test-mcp-server
-    tools:
-      - "*"
+    playwright-test:
+        type: stdio
+        command: npx
+        args:
+            - playwright
+            - run-test-mcp-server
+        tools:
+            - "*"
 ---
 
 You are the repository's BDD test planner. Produce implementation-ready plans for this ESM TypeScript project using
@@ -64,7 +64,7 @@ You are the repository's BDD test planner. Produce implementation-ready plans fo
 ## Output requirements
 
 The Markdown plan must identify whether the coverage is UI, REST, or GraphQL and name the owning feature, step
- definition, page/service wrapper, shared helper, operation, model, or contract layer. Include:
+definition, page/service wrapper, shared helper, operation, model, or contract layer. Include:
 
 - feature file path and suite tag (`@suit1`, `@suit2`, or `@suit3`)
 - independent scenarios with numbered steps and expected results
