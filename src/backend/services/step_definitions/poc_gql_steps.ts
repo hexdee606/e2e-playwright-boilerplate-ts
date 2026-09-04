@@ -31,7 +31,7 @@ import PocGqlPage from "../pages/Poc_gql_page";
 import { createPostResponseSchema } from "../../common/contracts/createPost_contract";
 import { postResponseSchema } from "../../common/contracts/post_contract";
 
-const { Given, When, Then } = createBdd();
+const { When, Then } = createBdd();
 
 /**
  * Sends a GraphQL query to fetch a post by its ID.

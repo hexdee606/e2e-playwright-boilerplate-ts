@@ -144,6 +144,7 @@ class ApiHelper {
             );
             throw new Error(
                 "API request failed. See secured diagnostics for authorized investigation.",
+                { cause: error },
             );
         } finally {
             await context.dispose();

@@ -215,7 +215,7 @@ E2E_ALLOW_UNSAFE_CHROMIUM=true
 ```mermaid
 flowchart LR
     PR[🔀 Pull Request] --> V[✅ Validation]
-    V --> Q[Typecheck + Format + Lint]
+    V --> Q[Typecheck + Lint]
     V --> B[BDD Generation]
     V --> D[Dependency / Audit]
     V --> S[Secret Scan]
@@ -315,25 +315,66 @@ npm ci
 npx playwright install chromium
 ```
 
+### 2. Configure environment
+
+The framework supports two configuration layers:
+
+1. **Defaults** are defined in `configs/envConf.ts`.
+2. **Local overrides** are loaded from `.env`.
+
+When the same value is provided in `.env`, the `.env` value takes precedence over the default in `envConf.ts`.
+
+Create your local environment file from the example:
+
+```bash
+cp .env.example .env
+```
+
+Supported environment variables:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `E2E` | `int` | Test environment |
+| `E2E_FRONTEND_URL` | From `envConf.ts` | Frontend URL override |
+| `E2E_API_URL` | From `envConf.ts` | REST API URL override |
+| `E2E_GQL_URL` | From `envConf.ts` | GraphQL API URL override |
+| `E2E_VERBOSE` | `false` | Enables verbose diagnostics |
+| `E2E_CAPTURE_SENSITIVE_ARTIFACTS` | `false` | Enables sensitive test artifacts |
+| `E2E_ALLOW_UNSAFE_CHROMIUM` | `false` | Enables unsafe Chromium flags |
+
+Example:
+
+```env
+E2E=int
+E2E_FRONTEND_URL=
+E2E_API_URL=
+E2E_GQL_URL=
+E2E_VERBOSE=false
+E2E_CAPTURE_SENSITIVE_ARTIFACTS=false
+E2E_ALLOW_UNSAFE_CHROMIUM=false
+```
+
+> **Security:** `.env` is for local configuration and must not contain committed credentials or secrets. Keep `.env` out of source control and use CI/CD secret storage for sensitive values.
+
 For CI/Linux environments:
 
 ```bash
 npm run setup
 ```
 
-### 2. Generate BDD tests
+### 3. Generate BDD tests
 
 ```bash
 npm run test:generate-bdd
 ```
 
-### 3. Run everything
+### 4. Run everything
 
 ```bash
 npm run test:e2e
 ```
 
-### 4. Run one suite
+### 5. Run one suite
 
 ```bash
 npm run test:generate-bdd
@@ -353,6 +394,8 @@ Available projects:
 | `npm run setup`                 | Install dependencies and Playwright browsers with OS dependencies |
 | `npm run typecheck`             | Strict TypeScript validation                                      |
 | `npm run audit`                 | High-severity npm audit validation                                |
+| `npm run lint`                  | Run ESLint validation                                              |
+| `npm run lint:fix`              | Automatically fix supported ESLint issues                         |
 | `npm run test:generate-bdd`     | Generate executable tests                                         |
 | `npm run test:e2e`              | Generate + execute the full suite + report secret scan            |
 | `npm run test:debug`            | Debug `suit1`                                                     |
@@ -362,23 +405,43 @@ Available projects:
 
 ---
 
+## 🧹 Code quality
+
+The project uses **ESLint** with TypeScript and Playwright-specific rules.
+
+```bash
+npm run lint
+```
+
+To automatically fix supported issues:
+
+```bash
+npm run lint:fix
+```
+
+Formatting conventions are defined by the repository `.editorconfig`.
+
+---
+
 ## 🌍 Environment configuration
 
 The default environment is `int`.
 
-```bash
-E2E=int npm run test:e2e
+For local development, use `.env`:
+
+```env
+E2E=int
+E2E_FRONTEND_URL=https://frontend.example.test
+E2E_API_URL=https://api.example.test
+E2E_GQL_URL=https://graphql.example.test/api
+E2E_VERBOSE=false
+E2E_CAPTURE_SENSITIVE_ARTIFACTS=false
+E2E_ALLOW_UNSAFE_CHROMIUM=false
 ```
 
-Endpoint overrides are supported without changing test code:
+`.env.example` documents all supported framework variables. Values in `.env` override the corresponding defaults in `configs/envConf.ts`.
 
-```bash
-E2E=int \
-E2E_FRONTEND_URL=https://frontend.example.test \
-E2E_API_URL=https://api.example.test \
-E2E_GQL_URL=https://graphql.example.test/api \
-npm run test:e2e
-```
+For CI/CD, the same variables can be supplied directly by the CI environment or secret store without changing test code.
 
 ---
 
