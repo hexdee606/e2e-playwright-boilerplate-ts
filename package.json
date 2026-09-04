@@ -1,8 +1,7 @@
 {
     "name": "end-to-end-playwright-boilerplate",
     "version": "0.1.0",
-    "description": "A boilerplate project for end-to-end testing using Playwright, TypeScript, and other modern tools.",
-    "main": "index.js",
+    "description": "AI-assisted Playwright-BDD TypeScript Quality Engineering framework for UI, REST, and GraphQL testing with repository-aware Planner, Generator, and Healer agents.",
     "scripts": {
         "setup": "npm ci && playwright install --with-deps",
         "clean:reports": "node -e \"const fs=require('node:fs'); ['out/test-results','out/logs'].forEach(path=>fs.rmSync(path,{recursive:true,force:true}))\"",
@@ -23,16 +22,34 @@
         "playwright",
         "playwright-bdd",
         "bdd",
-        "cucumber",
-        "end-to-end",
-        "boilerplate",
+        "gherkin",
         "typescript",
-        "testing",
-        "automation",
-        "automation-framework",
+        "esm",
+        "end-to-end-testing",
+        "e2e-testing",
+        "test-automation",
+        "quality-engineering",
+        "ai-quality-engineering",
+        "ai-assisted-testing",
+        "ai-agents",
+        "copilot-agents",
+        "playwright-mcp",
         "api-testing",
+        "rest-testing",
         "graphql-testing",
+        "contract-testing",
+        "zod",
+        "api-mocking",
+        "route-mocking",
         "page-object-model",
+        "test-reporting",
+        "allure",
+        "monocart",
+        "security-testing",
+        "ci-cd",
+        "github-actions",
+        "automation-framework",
+        "test-framework",
         "enterprise-testing"
     ],
     "author": "Dipen Chavan (hexdee606)",
@@ -41,6 +58,7 @@
     "devDependencies": {
         "@types/node": "^25.0.3",
         "chalk": "^5.6.2",
+        "prettier": "^3.9.6",
         "typescript": "^5.9.3"
     },
     "dependencies": {
@@ -85,19 +103,19 @@
         "node": ">=20.19.0",
         "npm": ">=11.2.0"
     },
-    "homepage": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2",
+    "homepage": "https://github.com/hexdee606/e2e-playwright-boilerplate-ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2.git"
+        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-ts.git"
     },
     "bugs": {
-        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-v2/issues"
+        "url": "https://github.com/hexdee606/e2e-playwright-boilerplate-ts/issues"
     },
     "readme": "README.md",
     "maintainers": [
         {
             "name": "Dipen Chavan",
-            "email": ""
+            "email": "10842172+hexdee606@users.noreply.github.com"
         }
     ],
     "allowScripts": {
