@@ -114,7 +114,7 @@ export class PlaywrightActions {
             this.frameLocator = null;
         } catch (error) {
             console.error("Error setting page:", error);
-            throw new Error("Failed to set the page."); // Providing more context on failure
+            throw new Error("Failed to set the page.", { cause: error }); // Providing more context on failure
         }
     }
 
@@ -143,7 +143,7 @@ export class PlaywrightActions {
             }
         } catch (error) {
             console.error("Error setting frame:", error);
-            throw new Error("Failed to set frame locator."); // Provide clearer error message
+            throw new Error("Failed to set frame locator.", { cause: error }); // Provide clearer error message
         }
     }
 
@@ -185,6 +185,7 @@ export class PlaywrightActions {
             console.error("Error navigating to URL:", error);
             throw new Error(
                 "Navigation failed to URL: " + redactSensitiveText(url),
+                { cause: error },
             );
         }
     }
@@ -206,6 +207,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve element count for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             );
         }
     }
@@ -218,7 +220,7 @@ export class PlaywrightActions {
     async waitAndCheck(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
@@ -226,7 +228,7 @@ export class PlaywrightActions {
             if (!(await element.isChecked())) {
                 await element.check();
             }
-            await expect(await element.isChecked()).toBeTruthy();
+            await expect(element).toBeChecked();
         } catch (error) {
             console.error(
                 `Error interacting with checkbox for selector "${this.safeSelector(selector)}":`,
@@ -234,6 +236,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check the checkbox for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             );
         }
     }
@@ -246,7 +249,7 @@ export class PlaywrightActions {
     async waitAndUncheck(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
@@ -255,7 +258,7 @@ export class PlaywrightActions {
                 await element.uncheck();
             }
 
-            await expect(await element.isChecked()).toBeFalsy();
+            await expect(element).not.toBeChecked();
         } catch (error) {
             console.error(
                 `Error interacting with checkbox for selector "${this.safeSelector(selector)}":`,
@@ -263,6 +266,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to uncheck the checkbox for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             );
         }
     }
@@ -275,7 +279,7 @@ export class PlaywrightActions {
     async waitAndClick(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -287,6 +291,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to click the element for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             );
         }
     }
@@ -299,7 +304,7 @@ export class PlaywrightActions {
     async waitAndDoubleClick(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -311,6 +316,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to double-click the element for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             );
         }
     }
@@ -323,7 +329,7 @@ export class PlaywrightActions {
     async waitAndClearInputBox(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -336,6 +342,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to clear input box for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -349,7 +356,7 @@ export class PlaywrightActions {
     async waitAndFillInputBox(selector: string, value: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
 
@@ -365,6 +372,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to fill input box for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -379,7 +387,7 @@ export class PlaywrightActions {
     ): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -419,11 +427,10 @@ export class PlaywrightActions {
     async waitAndTypeSensitiveInput(
         selector: string,
         value: string,
-        delay: number = 100,
     ): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -445,7 +452,7 @@ export class PlaywrightActions {
     async waitAndClearSensitiveInput(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -472,7 +479,7 @@ export class PlaywrightActions {
     ): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEditable();
@@ -486,6 +493,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to type in input box sequentially for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -503,7 +511,7 @@ export class PlaywrightActions {
     ): Promise<string | null> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.getAttribute(attribute);
@@ -514,6 +522,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve attribute "${this.safeSelector(attribute)}" for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -526,7 +535,7 @@ export class PlaywrightActions {
     async waitAndHover(selector: string): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             await element.isEnabled();
@@ -538,6 +547,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to hover over element for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -551,7 +561,7 @@ export class PlaywrightActions {
     async waitAndGetInnerHtmlText(selector: string): Promise<string> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.innerHTML();
@@ -562,6 +572,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve inner HTML for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -575,7 +586,7 @@ export class PlaywrightActions {
     async waitAndGetInnerText(selector: string): Promise<string> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.innerText();
@@ -586,6 +597,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve inner text for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -599,7 +611,7 @@ export class PlaywrightActions {
     async waitAndGetInputValue(selector: string): Promise<string> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.inputValue();
@@ -610,6 +622,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve input value for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -623,7 +636,7 @@ export class PlaywrightActions {
     async waitAndGetAllInnerText(selector: string): Promise<string[]> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.allInnerTexts();
@@ -634,6 +647,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to retrieve inner texts for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -647,7 +661,7 @@ export class PlaywrightActions {
     async isChecked(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isChecked();
@@ -658,6 +672,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check the state of checkbox for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -671,7 +686,7 @@ export class PlaywrightActions {
     async isDisabled(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isDisabled();
@@ -682,6 +697,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check if element is disabled for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -695,7 +711,7 @@ export class PlaywrightActions {
     async isEditable(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isEditable();
@@ -706,6 +722,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check if element is editable for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -719,7 +736,7 @@ export class PlaywrightActions {
     async isEnabled(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             await element.waitFor({ state: "visible" });
             await element.scrollIntoViewIfNeeded();
             return await element.isEnabled();
@@ -730,6 +747,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check if element is enabled for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -743,7 +761,7 @@ export class PlaywrightActions {
     async isHidden(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             return await element.isHidden();
         } catch (error) {
             console.error(
@@ -752,6 +770,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check if element is hidden for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -765,7 +784,7 @@ export class PlaywrightActions {
     async isVisible(selector: string): Promise<boolean> {
         try {
             const frame = await this.getFrame();
-            const element = await frame.locator(selector);
+            const element = frame.locator(selector);
             return await element.isVisible();
         } catch (error) {
             console.error(
@@ -774,6 +793,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to check if element is visible for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -807,6 +827,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to perform keyboard shortcut for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -835,7 +856,7 @@ export class PlaywrightActions {
             const keyArray = Array.isArray(keys) ? keys : [keys];
 
             // Press each key in the array sequentially
-            for (let key of keyArray) {
+            for (const key of keyArray) {
                 await this.page?.keyboard.press(key);
             }
         } catch (error) {
@@ -845,6 +866,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to press keys for selector: ${this.safeSelector(selector)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -862,9 +884,9 @@ export class PlaywrightActions {
             | string
             | ElementHandle
             | Array<string>
-            | Object
+            | object
             | Array<ElementHandle>
-            | Array<Object>,
+            | Array<object>,
     ): Promise<void> {
         try {
             // Get the frame context where the element is located
@@ -884,6 +906,7 @@ export class PlaywrightActions {
             );
             throw new Error(
                 `Failed to select option for selector: ${this.safeSelector(selector)} with option: ${this.safeValue(option)}`,
+                { cause: error },
             ); // Provide more context
         }
     }
@@ -901,8 +924,6 @@ export class PlaywrightActions {
         downloadPath: string = "../downloads",
     ): Promise<string> {
         try {
-            const frame = await this.getFrame();
-
             // Wait for the download event
             const downloadPromise = this.page?.waitForEvent("download");
 
@@ -944,7 +965,7 @@ export class PlaywrightActions {
     ): Promise<void> {
         try {
             const frame = await this.getFrame();
-            const input = await frame.locator(selector);
+            const input = frame.locator(selector);
 
             // Check if the filePath is an array or a single file path
             if (Array.isArray(filePath)) {

@@ -190,7 +190,7 @@ class PocUiPage {
             }
         }
 
-        let actualCalenderYear: string =
+        const actualCalenderYear: string =
             await playwrightActions.waitAndGetInnerText(
                 this.getActualCalenderDateYearXPath,
             );

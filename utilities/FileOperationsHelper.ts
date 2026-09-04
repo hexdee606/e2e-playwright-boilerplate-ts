@@ -212,7 +212,7 @@ class FileOperationsHelper {
     async roundToNearestIntegerOrDecimal(
         number: number,
     ): Promise<number | string> {
-        let rounded = Math.round(number);
+        const rounded = Math.round(number);
         return rounded === 0
             ? parseFloat(number.toFixed(1))
             : rounded.toLocaleString("en-US", { maximumFractionDigits: 0 });

@@ -147,6 +147,7 @@ class GraphQLHelper {
             );
             throw new Error(
                 "GraphQL request failed. See secured diagnostics for authorized investigation.",
+                { cause: error },
             );
         } finally {
             await context.dispose();

@@ -22,6 +22,7 @@
   ================================================================
 */
 
+import "dotenv/config";
 import { defineConfig } from "@playwright/test"; // Import Playwright test configuration function
 import { defineBddConfig } from "playwright-bdd"; // Import BDD configuration function for behavior-driven testing
 import { platform, arch } from "node:os";
