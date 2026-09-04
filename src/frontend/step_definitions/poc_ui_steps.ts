@@ -43,6 +43,10 @@ When(/^the user selects the "([^"]*)" option from the navigation list$/, async f
     await pocUiPage.selectUiOption(option);
 });
 
+Then(/^the user should see the "([^"]*)" page heading$/, async function ({}, heading: string) {
+    await pocUiPage.validatePageHeading(heading);
+});
+
 /**
  * Sets a specific date in a labeled date picker input.
  *

@@ -26,6 +26,9 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "strict": true,
+    "types": [
+      "node"
+    ],
     "allowJs": true,
     "outDir": "./dist",
     "paths": {
@@ -48,10 +51,19 @@
         "./utilities/FileOperationsHelper.ts"
       ],
       "@PlaywrightActions": [
-        "utilities/PlaywrightActions.ts"
+        "./utilities/PlaywrightActions.ts"
+      ],
+      "@TestFixtures": [
+        "./utilities/TestFixtures.ts"
+      ],
+      "@PlaywrightMockingAddon": [
+        "./utilities/PlaywrightMockingAddon.ts"
+      ],
+      "@SecureDiagnostics": [
+        "./utilities/SecureDiagnostics.ts"
       ],
       "@MemoryKnowledgeBase": [
-        "utilities/MemoryKnowledgeBase.ts"
+        "./utilities/MemoryKnowledgeBase.ts"
       ]
     }
   },

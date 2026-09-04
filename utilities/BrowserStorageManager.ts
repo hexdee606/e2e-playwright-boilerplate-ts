@@ -18,6 +18,9 @@
   ================================================================
 */
 import {Page, Frame, BrowserContext} from '@playwright/test';
+import {installConsoleRedaction, redactSensitiveText, secureError} from "@SecureDiagnostics";
+
+installConsoleRedaction();
 
 // Define a Cookie interface to match the expected structure of cookies
 interface Cookie {
@@ -65,7 +68,7 @@ class BrowserStorageManager {
             const cookies = await context.cookies();
             return cookies as Cookie[];  // Ensure we return cookies in the correct type
         } catch (error) {
-            throw new Error(`Failed to retrieve cookies: ${error}`);
+            throw secureError("Failed to retrieve cookies", error);
         }
     }
 
@@ -79,7 +82,7 @@ class BrowserStorageManager {
         try {
             await context.addCookies([cookie]);
         } catch (error) {
-            throw new Error(`Failed to set cookie: ${error}`);
+            throw secureError("Failed to set cookie", error);
         }
     }
 
@@ -97,7 +100,7 @@ class BrowserStorageManager {
                 await context.clearCookies();
             }
         } catch (error) {
-            throw new Error(`Failed to remove cookie: ${error}`);
+            throw secureError(`Failed to remove cookie named ${redactSensitiveText(name)}`, error);
         }
     }
 
@@ -110,7 +113,7 @@ class BrowserStorageManager {
         try {
             await context.clearCookies();
         } catch (error) {
-            throw new Error(`Failed to clear cookies: ${error}`);
+            throw secureError("Failed to clear cookies", error);
         }
     }
 
@@ -129,7 +132,7 @@ class BrowserStorageManager {
                 storage.setItem(key, JSON.stringify(value));
             }, {storageType, key, value});
         } catch (error) {
-            throw new Error(`Failed to set ${storageType} item: ${error}`);
+            throw secureError(`Failed to set ${storageType} item for key ${redactSensitiveText(key)}`, error);
         }
     }
 
@@ -147,7 +150,7 @@ class BrowserStorageManager {
                 storage.removeItem(key);
             }, {storageType, key});
         } catch (error) {
-            throw new Error(`Failed to remove ${storageType} item: ${error}`);
+            throw secureError(`Failed to remove ${storageType} item for key ${redactSensitiveText(key)}`, error);
         }
     }
 
@@ -164,7 +167,7 @@ class BrowserStorageManager {
                 storage.clear();
             }, storageType);
         } catch (error) {
-            throw new Error(`Failed to clear ${storageType}: ${error}`);
+            throw secureError(`Failed to clear ${storageType}`, error);
         }
     }
 
@@ -189,7 +192,7 @@ class BrowserStorageManager {
                 }).reduce((acc, curr) => Object.assign(acc, curr), {});
             }, storageType);
         } catch (error) {
-            throw new Error(`Failed to retrieve ${storageType} data: ${error}`);
+            throw secureError(`Failed to retrieve ${storageType} data`, error);
         }
     }
 
@@ -207,7 +210,7 @@ class BrowserStorageManager {
             }
             return page;
         } catch (error) {
-            throw new Error(`Failed to switch to frame: ${error}`);
+            throw secureError(`Failed to switch to frame using URL fragment ${redactSensitiveText(partialUrl)}`, error);
         }
     }
 
@@ -225,7 +228,7 @@ class BrowserStorageManager {
         if (matchingFrame) {
             return matchingFrame;
         } else {
-            console.warn(`Iframe containing URL part "${partialUrl}" not found. Returning the main page.`);
+            console.warn(`Iframe containing URL part "${redactSensitiveText(partialUrl)}" not found. Returning the main page.`);
             return page;
         }
     }

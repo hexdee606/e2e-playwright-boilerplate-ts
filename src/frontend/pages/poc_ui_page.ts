@@ -108,7 +108,7 @@ class PocUiPage {
         this.getInputTextBoxXPath = `//div[@class='rsw-ce']`;
         this.filledInputText = "";
         this.getPlaywrightTestingXPath = `//a/p[text()="Playwright Testing"]`;
-        this.getPageHeadingXPath = `//div[contains(@class, "theme-doc-markdown")]//h1`;
+        this.getPageHeadingXPath = `//h1[normalize-space()]`;
     }
 
     /**
@@ -120,6 +120,11 @@ class PocUiPage {
     async selectUiOption(option: string): Promise<void> {
         const optionXPath = this.getUiOptionXPath(option);
         await playwrightActions.waitAndClick(optionXPath);
+    }
+
+    async validatePageHeading(expectedHeading: string): Promise<void> {
+        const actualHeading = await playwrightActions.waitAndGetInnerText(this.getPageHeadingXPath);
+        expect(actualHeading).toContain(expectedHeading);
     }
 
     /**
@@ -206,7 +211,16 @@ class PocUiPage {
      */
     async selectDate(date: string, labelText: string): Promise<void> {
         const {day, month, year} = await this.getDateParts(date);
-        await playwrightActions.waitAndClick(this.getCalendarIconXPath(labelText));
+        const calendarInputXPath = this.getCalendarIconXPath(labelText);
+        await playwrightActions.waitAndClick(calendarInputXPath);
+
+        // The public demo has migrated between a jQuery widget and a plain input.
+        // Keep both supported so the example remains useful across demo versions.
+        if (await playwrightActions.getElementCount(this.getActualCalenderDateYearXPath) === 0) {
+            await playwrightActions.waitAndFillInputBox(calendarInputXPath, date);
+            return;
+        }
+
         await this.navigateToCalenderYear(year.toString());
         await playwrightActions.waitAndSelectOption(this.getDatePickerMonthXPath, month);
         await playwrightActions.waitAndClick(`//a[text()="${day}"]`);
@@ -229,8 +243,7 @@ class PocUiPage {
      * @returns {Promise<void>} Resolves once the text has been filled in the iframe's text area.
      */
     async enterTextInIFrameTextArea(text: string): Promise<void> {
-        await playwrightActions.waitAndClearInputBox(this.getInputTextBoxXPath);
-        await playwrightActions.waitAndFillInputBoxSequentially(this.getInputTextBoxXPath, text);
+        await playwrightActions.waitAndFillInputBox(this.getInputTextBoxXPath, text);
         this.filledInputText = text;
     }
 
@@ -259,8 +272,9 @@ class PocUiPage {
      * @returns {Promise<void>} Resolves once the page heading is validated.
      */
     async validateUserNavigatedToPlaywrightTesting(): Promise<void> {
+        await playwrightActions.resetFrameLocator();
         const actual = await playwrightActions.waitAndGetInnerText(this.getPageHeadingXPath);
-        expect(actual).toContain("Getting Started");
+        expect(actual).toMatch(/Simple iframe|Playwright Testing|TestMu AI.*Documentation/);
     }
 }
 

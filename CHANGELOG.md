@@ -15,6 +15,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added deterministic DNA/RNA memory retrieval for AI agents through
   `utilities/MemoryKnowledgeBase.ts`.
 
+## [0.1.0] - 2026-09-04
+
+### Added
+
+- Deterministic mocked login scenarios for secure credential entry, server failures, and transient failure recovery.
+- Mocked UI component coverage for select, checkbox, dialog, and assertion handling.
+- REST Fake Store product coverage with a Zod response contract.
+- GraphQL post response contract coverage.
+- Typed Page-based UI, REST, and GraphQL route mocking with offline success and failure coverage.
+- Open-source release documentation, security guidance, and AI-readable `llms.txt` metadata.
+
+### Changed
+
+- Updated UI selectors and assertions for current Selenium Playground behavior.
+- Added secure sensitive-input APIs and kept secret values out of scenario data and failure messages.
+- Updated project version to `0.1.0` in `package.json` and `package-lock.json`.
+
 ## [0.0.6] – 2025-05-20
 
 | **Build**         | **Status** | **Date**    | **Commit**                                    |

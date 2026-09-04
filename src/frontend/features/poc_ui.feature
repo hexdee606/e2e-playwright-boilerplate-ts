@@ -59,6 +59,16 @@ Feature: UI Component Automation Proof of Concept
       | 01 Feb 2025 | 28 Feb 2025 |
       | 01 Feb 2024 | 30 Nov 2024 |
 
+  @suit1
+  Scenario: Navigate to the date picker page
+    When the user selects the "JQuery Date Picker" option from the navigation list
+    Then the user should see the "JQuery Date Picker Demo" page heading
+
+  @suit1
+  Scenario: Navigate to the input form page
+    When the user selects the "Input Form Submit" option from the navigation list
+    Then the user should see the "Form Demo" page heading
+
   # =========================================================================
   # @suit2
   # Scenario: Validate iframe text entry and redirection

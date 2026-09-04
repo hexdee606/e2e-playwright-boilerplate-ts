@@ -29,10 +29,9 @@ import {createBdd} from "playwright-bdd";
 import {expect} from "@playwright/test";
 import PocGqlPage from "../pages/Poc_gql_page";
 import {createPostResponseSchema} from "../../common/contracts/createPost_contract";
+import {postResponseSchema} from "../../common/contracts/post_contract";
 
 const {Given, When, Then} = createBdd();
-
-let response: any;
 
 /**
  * Sends a GraphQL query to fetch a post by its ID.
@@ -42,7 +41,7 @@ let response: any;
  * @param {string | number} postId - The ID of the post to fetch.
  */
 When(/^I send a GraphQL query to get a post with ID "([^"]*)"$/, async function ({}, postId: string | number) {
-    response = await PocGqlPage.GetAPostById(postId);
+  this.response = await PocGqlPage.GetAPostById(postId);
 });
 
 /**
@@ -53,8 +52,8 @@ When(/^I send a GraphQL query to get a post with ID "([^"]*)"$/, async function 
  * @param {number} status - The expected HTTP status code.
  */
 Then(/^the response status should be (\d+)$/, async function ({}, status: number) {
-    expect(response).toBeDefined();
-    expect(response.status).toBe(Number(status));
+  expect(this.response).toBeDefined();
+  expect(this.response.status).toBe(Number(status));
 });
 
 /**
@@ -64,7 +63,7 @@ Then(/^the response status should be (\d+)$/, async function ({}, status: number
  * @param {} - The Playwright fixtures. Example use: {page, request, context, browserName, browserVersion, customFixture}
  */
 Then(/^the post title should not be empty$/, async function ({}) {
-    const body = await response.data;
+  const body = await this.response.data;
     const title = body.data?.post?.title;
     expect(title, "Post title should not be empty").toBeTruthy();
     expect(title.trim().length).toBeGreaterThan(0);
@@ -77,9 +76,18 @@ Then(/^the post title should not be empty$/, async function ({}) {
  * @param {} - The Playwright fixtures. Example use: {page, request, context, browserName, browserVersion, customFixture}
  */
 Then(/^the user of the post should have a valid ID$/, async function ({}) {
-    const body = await response.data;
+  const body = await this.response.data;
     const userId = body.data?.post?.user?.id;
     expect(userId, "User ID should exist").toBeTruthy();
+});
+
+When(/^I send a GraphQL query to get post contract data for ID "([^"]*)"$/, async function ({}, postId: string) {
+  this.response = await PocGqlPage.GetAPostById(postId);
+});
+
+Then(/^the post response should match the contract$/, async function ({}) {
+  const body = await this.response.data;
+  postResponseSchema.parse(body.data);
 });
 
 /**
@@ -91,7 +99,7 @@ Then(/^the user of the post should have a valid ID$/, async function ({}) {
  * @param {string} bodyText - Body content of the new post.
  */
 When(/^I send a GraphQL mutation to create a post with title "([^"]*)" and body "([^"]*)"$/, async function ({}, title: string, bodyText: string) {
-    response = await PocGqlPage.CreateAPost(title, bodyText);
+  this.response = await PocGqlPage.CreateAPost(title, bodyText);
 });
 
 /**
@@ -101,7 +109,7 @@ When(/^I send a GraphQL mutation to create a post with title "([^"]*)" and body 
  * @param {} - The Playwright fixtures. Example use: {page, request, context, browserName, browserVersion, customFixture}
  */
 Then(/^the created post should have a ID$/, async function ({}) {
-    const body = await response.data;
+  const body = await this.response.data;
     const id = body.data?.createPost?.id;
     expect(id, "Created post should have an ID").toBeTruthy();
 });
@@ -114,7 +122,7 @@ Then(/^the created post should have a ID$/, async function ({}) {
  * @param {string} expectedTitle - The expected title of the post.
  */
 Then(/^the title should be "([^"]*)"$/, async function ({}, expectedTitle: string) {
-    const body = await response.data;
+  const body = await this.response.data;
     const actualTitle = body.data?.createPost?.title;
     expect(actualTitle).toBe(expectedTitle);
 });
@@ -127,5 +135,5 @@ Then(/^the title should be "([^"]*)"$/, async function ({}, expectedTitle: strin
  */
 Then(/^the createPost response should match the contract$/, async function ({}) {
     // Validate using Zod
-    await createPostResponseSchema.parse(response.data.data);
+  await createPostResponseSchema.parse(this.response.data.data);
 });

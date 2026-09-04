@@ -114,4 +114,15 @@ const envConf: EnvConf = {
     }
 };
 
+const selectedEnv = process.env.E2E || 'int';
+
+if (!envConf.configs[selectedEnv]) {
+    throw new Error(`Unknown E2E environment "${selectedEnv}". Available environments: ${Object.keys(envConf.configs).join(', ')}`);
+}
+
+envConf.env = selectedEnv;
+envConf.configs[selectedEnv].frontend.url = process.env.E2E_FRONTEND_URL || envConf.configs[selectedEnv].frontend.url;
+envConf.configs[selectedEnv].backend.api.url = process.env.E2E_API_URL || envConf.configs[selectedEnv].backend.api.url;
+envConf.configs[selectedEnv].backend.gql.url = process.env.E2E_GQL_URL || envConf.configs[selectedEnv].backend.gql.url;
+
 export default envConf;

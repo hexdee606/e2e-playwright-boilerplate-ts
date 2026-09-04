@@ -18,6 +18,9 @@
 
 import {request} from "@playwright/test";
 import envConf from "@envConf";
+import {installConsoleRedaction} from "@SecureDiagnostics";
+
+installConsoleRedaction();
 
 // Enum for HTTP methods (GET, POST, PUT, PATCH, DELETE)
 enum Methods {
@@ -108,7 +111,7 @@ class ApiHelper {
     ): Promise<object> {
         const context = await request.newContext({}); // Create a new context for the request
         const url = this.normalizeUrl(endpoint); // Normalize the URL (base URL + endpoint)
-
+        
         // Construct the request options object
         const options = {
             timeout: this.config.timeout, // Set timeout based on the configuration
@@ -127,9 +130,10 @@ class ApiHelper {
             const responseBody = await response.json().catch(() => response.text());
             return {status: response.status(), data: responseBody}; // Return status and parsed response data
         } catch (error) {
-            // Catch any errors and log them
-            console.error(`API request failed: ${error}`);
-            throw new Error(`API request failed: ${error}`); // Rethrow the error
+            console.error('API request failed. Detailed transport data is intentionally suppressed.');
+            throw new Error('API request failed. See secured diagnostics for authorized investigation.');
+        } finally {
+            await context.dispose();
         }
     }
 

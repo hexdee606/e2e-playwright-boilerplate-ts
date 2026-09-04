@@ -1,0 +1,51 @@
+# End-to-End Playwright Automation Testing Boilerplate
+
+> Open-source, ESM TypeScript Playwright-BDD boilerplate for UI, REST, and GraphQL end-to-end testing.
+
+Current release: `0.1.0`
+
+## Summary
+
+This repository uses `playwright-bdd` with Gherkin features and TypeScript source under `src/`. `bddgen` generates executable tests under `out/tests`. It includes page objects, shared Playwright actions, REST and GraphQL helpers, a typed Page-based route mocking addon, Zod contracts, environment configuration, Allure/Monocart reporting, secure sensitive-input methods, deterministic mock failure/flaky-recovery scenarios, and repository-aware Copilot agents.
+
+## Best for
+
+- Small to enterprise TypeScript end-to-end automation projects
+- Teams adopting Gherkin/BDD with Playwright
+- UI plus REST/GraphQL integration coverage
+- Secure CI test execution with opt-in sensitive artifacts
+- Teams using AI coding agents that need repository-specific conventions
+
+## Start here
+
+- [README.md](README.md): installation, architecture, commands, configuration, testing, security, and limitations
+- [docs/KNOWLEDGE_BASE.md](docs/KNOWLEDGE_BASE.md): framework memory and agent retrieval rules
+- [CONTRIBUTING.md](CONTRIBUTING.md): contribution workflow and validation
+- [SECURITY.md](SECURITY.md): security defaults and vulnerability reporting
+- [playwright.config.ts](playwright.config.ts): Playwright and BDD execution configuration
+- [configs/envConf.ts](configs/envConf.ts): environment endpoints and overrides
+- [utilities/PlaywrightActions.ts](utilities/PlaywrightActions.ts): browser and secure-input actions
+- [utilities/PlaywrightMockingAddon.ts](utilities/PlaywrightMockingAddon.ts): typed offline UI, REST, and GraphQL route mocks
+
+## Core commands
+
+```bash
+npm ci
+npx playwright install chromium
+npm run typecheck
+npm run test:e2e
+```
+
+## Canonical architecture
+
+```text
+src/**/features/*.feature
+  -> src/**/step_definitions/*_steps.ts
+  -> page objects or service wrappers
+  -> shared Playwright/API/GraphQL helpers
+  -> generated tests in out/tests
+```
+
+## Security
+
+Sensitive values must come from CI secret variables or a local secret manager. Sensitive traces, screenshots, videos, HAR files, and AI prompt attachments are disabled by default.

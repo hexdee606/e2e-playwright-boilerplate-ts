@@ -32,7 +32,6 @@
 import GraphQLHelper from "@GraphQLHelper";
 import {GET_POST_BY_ID} from "../operations/queries/GET_A_POST_Query";
 import {CREATE_A_POST_Mutation} from "../operations/mutations/CREATE_A_POST_Mutation";
-import {input} from "../models/CreateAPost_Model";
 
 /**
  * Poc_gql_page class for handling GraphQL operations related to posts.
@@ -46,7 +45,7 @@ class Poc_gql_page {
      * @returns The response from the GraphQL query to fetch the post.
      */
     async GetAPostById(id: string | number) {
-        return await GraphQLHelper.sendRequest(GET_POST_BY_ID(id));
+      return await GraphQLHelper.sendRequest(GET_POST_BY_ID, {postId: id});
     };
 
     /**
@@ -57,9 +56,8 @@ class Poc_gql_page {
      * @returns The response from the GraphQL mutation to create a post.
      */
     async CreateAPost(title: string, body: string) {
-        input.input.title = title;
-        input.input.body = body;
-        return await GraphQLHelper.sendRequest(CREATE_A_POST_Mutation, input);
+      const variables = {input: {title, body}};
+      return await GraphQLHelper.sendRequest(CREATE_A_POST_Mutation, variables);
     }
 }
 

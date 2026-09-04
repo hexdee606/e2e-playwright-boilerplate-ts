@@ -34,6 +34,9 @@
 
 import {request} from "@playwright/test"; // Importing Playwright's request module
 import envConf from "@envConf"; // Importing environment configuration (API base URL, headers, etc.)
+import {installConsoleRedaction} from "@SecureDiagnostics";
+
+installConsoleRedaction();
 
 // Extract the backend configuration (URL and headers) from the environment configuration
 const {url, headers} = envConf.configs[envConf.env].backend.gql;
@@ -137,10 +140,10 @@ class GraphQLHelper {
             // Return the response status code and the parsed response data
             return {status: response.status(), data: responseBody};
         } catch (error) {
-            // Log the error to the console for debugging purposes
-            console.error("Error during GraphQL request:", error);
-            // Rethrow a more descriptive error
-            throw new Error(`GraphQL request failed: ${error}`);
+            console.error('GraphQL request failed. Detailed transport data is intentionally suppressed.');
+            throw new Error('GraphQL request failed. See secured diagnostics for authorized investigation.');
+        } finally {
+            await context.dispose();
         }
     }
 }
