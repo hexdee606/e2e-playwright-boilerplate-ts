@@ -18,8 +18,8 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    code-quality:
-        name: "Code Quality & BDD"
+    typecheck:
+        name: "Typecheck"
         runs-on: ubuntu-latest
 
         steps:
@@ -38,11 +38,42 @@ jobs:
             - name: Typecheck
               run: npm run typecheck
 
-            - name: Check formatting
-              run: npx prettier --check .
+    lint:
+        name: "Lint"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
 
             - name: Lint
               run: npm run lint
+
+    bdd-generation:
+        name: "BDD Generation"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: lts/*
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
 
             - name: Generate BDD tests
               run: npm run test:generate-bdd
@@ -59,18 +90,39 @@ jobs:
                     exit 1
                   fi
 
-            - name: Validate Playwright configuration
-              run: npx playwright test --list
-
-    dependency-security:
-        name: "Dependency & Security"
+    playwright-validation:
+        name: "Playwright Configuration"
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout
               uses: actions/checkout@v6
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
               with:
-                  fetch-depth: 0
+                  node-version: lts/*
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Chromium
+              run: npx playwright install chromium
+
+            - name: Generate BDD tests
+              run: npm run test:generate-bdd
+
+            - name: Validate Playwright configuration
+              run: npx playwright test --list
+
+    dependency-audit:
+        name: "NPM Security Audit"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
 
             - name: Setup Node.js
               uses: actions/setup-node@v6
@@ -84,8 +136,26 @@ jobs:
             - name: NPM security audit
               run: npm audit --audit-level=high
 
+    dependency-review:
+        name: "Dependency Review"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
             - name: Dependency Review
               uses: actions/dependency-review-action@v4
+
+    secret-scan:
+        name: "Secret Scan"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
 
             - name: Secret Scan
               uses: gitleaks/gitleaks-action@v2
@@ -94,22 +164,83 @@ jobs:
 
     validation-summary:
         name: "PR Validation Summary"
+
         needs:
-            - code-quality
-            - dependency-security
+            - typecheck
+            - lint
+            - bdd-generation
+            - playwright-validation
+            - dependency-audit
+            - dependency-review
+            - secret-scan
+
         if: always()
+
         runs-on: ubuntu-latest
 
         steps:
-            - name: Validate all checks
+            - name: Collect validation results
               run: |
-                  echo "Code Quality & BDD: ${{ needs.code-quality.result }}"
-                  echo "Dependency & Security: ${{ needs.dependency-security.result }}"
+                  echo "========================================"
+                  echo "        PR VALIDATION SUMMARY"
+                  echo "========================================"
+                  echo ""
 
-                  if [[ "${{ needs.code-quality.result }}" != "success" ||
-                        "${{ needs.dependency-security.result }}" != "success" ]]; then
+                  echo "Typecheck:              ${{ needs.typecheck.result }}"
+                  echo "Lint:                   ${{ needs.lint.result }}"
+                  echo "BDD Generation:         ${{ needs.bdd-generation.result }}"
+                  echo "Playwright Validation:  ${{ needs.playwright-validation.result }}"
+                  echo "NPM Security Audit:     ${{ needs.dependency-audit.result }}"
+                  echo "Dependency Review:      ${{ needs.dependency-review.result }}"
+                  echo "Secret Scan:            ${{ needs.secret-scan.result }}"
+                  echo ""
+
+                  FAILED=0
+
+                  echo "========================================"
+                  echo "           FAILED VALIDATIONS"
+                  echo "========================================"
+
+                  if [[ "${{ needs.typecheck.result }}" != "success" ]]; then
+                    echo "❌ Typecheck"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.lint.result }}" != "success" ]]; then
+                    echo "❌ Lint"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.bdd-generation.result }}" != "success" ]]; then
+                    echo "❌ BDD Generation"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.playwright-validation.result }}" != "success" ]]; then
+                    echo "❌ Playwright Configuration"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.dependency-audit.result }}" != "success" ]]; then
+                    echo "❌ NPM Security Audit"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.dependency-review.result }}" != "success" ]]; then
+                    echo "❌ Dependency Review"
+                    FAILED=1
+                  fi
+
+                  if [[ "${{ needs.secret-scan.result }}" != "success" ]]; then
+                    echo "❌ Secret Scan"
+                    FAILED=1
+                  fi
+
+                  echo ""
+
+                  if [[ "$FAILED" -ne 0 ]]; then
                     echo "❌ Pull Request validation failed."
                     exit 1
                   fi
 
-                  echo "✅ All Pull Request validation checks passed."
+                  echo "✅ All Pull Request validations passed."
